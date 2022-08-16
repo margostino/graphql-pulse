@@ -1,0 +1,9 @@
+server:
+  port: 8080
+
+schema:
+  file: schema.graphql
+
+banner:
+  path: banner.txt
+  enabled: true

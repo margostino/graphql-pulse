@@ -1,0 +1,25 @@
+type DemographicIndicators {
+    population: Long
+    population_between_30_39: Long
+}
+
+type EconomyIndicators {
+    gross_domestic_product_per_capita: Long
+    gross_national_income: Long
+    government_debt: Long
+}
+
+type EnvironmentIndicators {
+    co2_per_capita: Long
+    temperature_avg: Long
+}
+
+type Query {
+    demographic(country: String): DemographicIndicators
+    economy(country: String): EconomyIndicators
+    environment(country: String): EnvironmentIndicators
+}
+
+schema {
+    query: Query
+}
