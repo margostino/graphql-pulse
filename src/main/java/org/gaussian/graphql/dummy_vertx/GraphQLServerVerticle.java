@@ -1,4 +1,4 @@
-package org.gaussian.graphql.dummy;
+package org.gaussian.graphql.dummy_vertx;
 
 import graphql.GraphQL;
 import graphql.language.ScalarTypeDefinition;
@@ -25,6 +25,7 @@ import io.vertx.ext.web.handler.graphql.GraphQLHandlerOptions;
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpHeaderValues.APPLICATION_JSON;
 import static java.lang.String.format;
+import static org.gaussian.graphql.pulse.GraphQLPulse.newRuntimeWiringBuilder;
 
 public class GraphQLServerVerticle extends AbstractVerticle {
 
@@ -47,9 +48,9 @@ public class GraphQLServerVerticle extends AbstractVerticle {
         final int port = config.getInteger("port") != null ? config.getInteger("port") : DEFAULT_PORT;
 
         httpServer(port).requestHandler(router)
-                        .listen(port)
-                        .onSuccess(server -> complete(server, promise))
-                        .onFailure(server -> fail(server, promise));
+                .listen(port)
+                .onSuccess(server -> complete(server, promise))
+                .onFailure(server -> fail(server, promise));
     }
 
     private void complete(HttpServer server, Promise<Void> promise) {
@@ -87,12 +88,12 @@ public class GraphQLServerVerticle extends AbstractVerticle {
         schemaRegistry.add(scalarTypeDefinition);
 
         final DummyDataFetcher fetcher = new DummyDataFetcher();
-        final RuntimeWiring runtimeWiring = RuntimeWiring.newRuntimeWiring()
-                                                         .scalar(ExtendedScalars.GraphQLLong)
-                                                         .type("Query", typeWiring -> typeWiring.dataFetcher("demographic", fetcher))
-                                                         .type("Query", typeWiring -> typeWiring.dataFetcher("economy", fetcher))
-                                                         .type("Query", typeWiring -> typeWiring.dataFetcher("environment", fetcher))
-                                                         .build();
+        final RuntimeWiring runtimeWiring = newRuntimeWiringBuilder()
+                .scalar(ExtendedScalars.GraphQLLong)
+                .type("Query", typeWiring -> typeWiring.dataFetcher("demographic", fetcher))
+                .type("Query", typeWiring -> typeWiring.dataFetcher("economy", fetcher))
+                .type("Query", typeWiring -> typeWiring.dataFetcher("environment", fetcher))
+                .build();
 
         final SchemaGenerator schemaGenerator = new SchemaGenerator();
         final GraphQLSchema graphQLSchema = schemaGenerator.makeExecutableSchema(schemaRegistry, runtimeWiring);

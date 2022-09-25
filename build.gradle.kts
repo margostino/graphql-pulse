@@ -39,6 +39,9 @@ dependencies {
   implementation("io.vertx:vertx-micrometer-metrics")
   implementation("io.vertx:vertx-rx-java3")
   implementation("io.vertx:vertx-reactive-streams")
+  implementation("io.vertx:vertx-micrometer-metrics:4.3.2")
+  implementation("io.vertx:vertx-dropwizard-metrics:4.3.2")
+
   implementation("com.google.guava:guava:31.1-jre")
   implementation("org.slf4j:slf4j-api:1.7.36")
   implementation("ch.qos.logback:logback-classic:1.2.11")
@@ -49,11 +52,9 @@ dependencies {
   implementation("com.graphql-java:graphql-java-extended-scalars:18.1")
   implementation("com.swrve:rate-limited-logger:2.0.2")
   implementation("com.google.inject:guice:5.1.0")
-  implementation("com.google.inject.extensions:guice-multibindings:4.2.3")
   implementation("com.datadoghq:java-dogstatsd-client:4.0.0")
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3")
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.13.3")
-  implementation("io.vertx:vertx-micrometer-metrics:4.3.2")
   implementation("io.micrometer:micrometer-registry-prometheus:1.9.2")
   implementation("org.sonatype.nexus:google-guava-eventbus:3.2.0-01")
 

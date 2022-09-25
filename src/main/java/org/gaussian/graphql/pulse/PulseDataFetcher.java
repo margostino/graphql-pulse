@@ -1,57 +1,77 @@
 package org.gaussian.graphql.pulse;
 
-import com.google.common.eventbus.AsyncEventBus;
-import com.google.common.eventbus.EventBus;
 import graphql.execution.DataFetcherResult;
-import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
-import io.vertx.core.Future;
-import io.vertx.core.json.JsonObject;
+import io.micrometer.core.instrument.Measurement;
+import io.micrometer.core.instrument.Meter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.vertx.micrometer.backends.BackendRegistries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.Executors;
 
-import static io.vertx.core.Future.fromCompletionStage;
+import static java.util.concurrent.CompletableFuture.completedFuture;
+import static java.util.stream.Collectors.toList;
+import static org.gaussian.graphql.pulse.MetricType.metricOf;
 
-public abstract class PulseDataFetcher implements DataFetcher<CompletionStage<DataFetcherResult>> {
+public class PulseDataFetcher extends AbstractPulseDataFetcher {
 
     private static final Logger LOG = LoggerFactory.getLogger(PulseDataFetcher.class);
-
-    private final EventBus eventBus;
+    private final Random random;
 
     public PulseDataFetcher() {
-        this.eventBus = new AsyncEventBus(Executors.newCachedThreadPool());
-        QueryListener listener = new QueryListener();
-        eventBus.register(listener);
+        this.random = new Random();
     }
-
-    public abstract CompletionStage<DataFetcherResult> getAndTrack(DataFetchingEnvironment environment);
 
     @Override
-    public CompletionStage<DataFetcherResult> get(DataFetchingEnvironment environment) {
-        LOG.info("fetching fields");
-        Future<DataFetcherResult> asyncResult = fromCompletionStage(getAndTrack(environment));
-        asyncResult.onSuccess(this::trackData)
-                   .onFailure(this::trackError);
-        return asyncResult.toCompletionStage();
+    public CompletionStage<DataFetcherResult> getAndPulse(DataFetchingEnvironment environment) {
+        LOG.info("fetching and tracking query");
+        List<String> fields = getQueryFields(environment);
+        return completedFuture(getPulse(fields));
     }
 
-    private void trackData(Object result) {
-        if (result instanceof DataFetcherResult) {
-            DataFetcherResult dataFetcherResult = (DataFetcherResult) result;
-            if (dataFetcherResult.getData() instanceof Map) {
-                Map<String, Object> data = (Map) dataFetcherResult.getData();
-                final String message = JsonObject.mapFrom(data).encode();
-                eventBus.post(message);
-            }
+    private DataFetcherResult getPulse(List<String> fields) {
+        Map<String, Object> data = new HashMap<>();
+        fields.stream().forEach(field -> data.put(field, getPulseFor(field)));
+        return DataFetcherResult.newResult()
+                .data(data)
+                .build();
+    }
+
+    private List<PulseCounter> getPulseFor(String field) {
+        MeterRegistry registry = BackendRegistries.getDefaultNow();
+        final String metricName = metricOf(field);
+        List<Meter> meters = registry.getMeters().stream()
+                .filter(meter -> meter.getId().getName().equalsIgnoreCase(metricName))
+                .collect(toList());
+
+        if (meters.size() == 0) {
+            return List.of(PulseCounter.builder().build());
         }
-    }
 
-    private void trackError(Object result) {
-        LOG.info("tracking error...");
-    }
+        return meters.stream()
+                .map(meter -> {
+                    PulseCounter.PulseCounterBuilder pulseCounter = PulseCounter.builder();
+                    meter.getId().getTags().stream()
+                            .forEach(tag -> {
+                                if (tag.getKey().equals("type")) {
+                                    pulseCounter.type(tag.getValue());
+                                } else {
+                                    pulseCounter.field(tag.getValue());
+                                }
+                            });
+                    List<Measurement> measurements = (List<Measurement>) meter.measure();
 
+                    if (measurements.size() == 1) {
+                        pulseCounter.count(measurements.get(0).getValue());
+                    }
+                    return pulseCounter.build();
+                })
+                .collect(toList());
+    }
 }

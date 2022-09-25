@@ -14,10 +14,23 @@ type EnvironmentIndicators {
     temperature_avg: Long
 }
 
+type PulseCounter {
+    type: String
+    field: String
+    count: Long
+}
+
+type Pulse {
+    requests: [PulseCounter!]
+    null_values: [PulseCounter!]
+    errors: [PulseCounter!]
+}
+
 type Query {
     demographic(country: String): DemographicIndicators
     economy(country: String): EconomyIndicators
     environment(country: String): EnvironmentIndicators
+    pulse(type: String, field: String): Pulse
 }
 
 schema {
