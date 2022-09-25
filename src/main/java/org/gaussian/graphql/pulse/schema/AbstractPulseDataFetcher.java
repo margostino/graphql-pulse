@@ -1,4 +1,4 @@
-package org.gaussian.graphql.pulse;
+package org.gaussian.graphql.pulse.schema;
 
 import graphql.GraphQLError;
 import graphql.execution.DataFetcherResult;
@@ -18,8 +18,8 @@ import java.util.concurrent.CompletionStage;
 import static io.vertx.core.Future.fromCompletionStage;
 import static io.vertx.core.json.JsonObject.mapFrom;
 import static java.util.stream.Collectors.toList;
-import static org.gaussian.graphql.pulse.GraphQLPulse.getGraphQLPulse;
-import static org.gaussian.graphql.pulse.GraphQLPulseVerticle.GRAPHQL_PULSE_ADDRESS;
+import static org.gaussian.graphql.pulse.app.GraphQLPulse.getGraphQLPulse;
+import static org.gaussian.graphql.pulse.verticle.GraphQLPulseVerticle.GRAPHQL_PULSE_ADDRESS;
 
 public abstract class AbstractPulseDataFetcher implements DataFetcher<CompletionStage<DataFetcherResult>> {
 

@@ -1,4 +1,4 @@
-package org.gaussian.graphql.pulse;
+package org.gaussian.graphql.pulse.schema;
 
 import graphql.execution.DataFetcherResult;
 import graphql.schema.DataFetchingEnvironment;
@@ -17,7 +17,7 @@ import java.util.concurrent.CompletionStage;
 
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.stream.Collectors.toList;
-import static org.gaussian.graphql.pulse.MetricType.metricOf;
+import static org.gaussian.graphql.pulse.domain.MetricType.metricOf;
 
 public class PulseDataFetcher extends AbstractPulseDataFetcher {
 

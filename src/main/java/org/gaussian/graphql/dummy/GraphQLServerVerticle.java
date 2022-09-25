@@ -1,4 +1,4 @@
-package org.gaussian.graphql.dummy_vertx;
+package org.gaussian.graphql.dummy;
 
 import graphql.GraphQL;
 import graphql.language.ScalarTypeDefinition;
@@ -25,7 +25,7 @@ import io.vertx.ext.web.handler.graphql.GraphQLHandlerOptions;
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpHeaderValues.APPLICATION_JSON;
 import static java.lang.String.format;
-import static org.gaussian.graphql.pulse.GraphQLPulse.newRuntimeWiringBuilder;
+import static org.gaussian.graphql.pulse.app.GraphQLPulse.newRuntimeWiringBuilder;
 
 public class GraphQLServerVerticle extends AbstractVerticle {
 

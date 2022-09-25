@@ -1,4 +1,4 @@
-package org.gaussian.graphql.pulse;
+package org.gaussian.graphql.pulse.schema;
 
 import lombok.Builder;
 import lombok.Getter;

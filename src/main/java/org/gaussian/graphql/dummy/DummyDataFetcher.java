@@ -1,8 +1,8 @@
-package org.gaussian.graphql.dummy_vertx;
+package org.gaussian.graphql.dummy;
 
 import graphql.execution.DataFetcherResult;
 import graphql.schema.DataFetchingEnvironment;
-import org.gaussian.graphql.pulse.AbstractPulseDataFetcher;
+import org.gaussian.graphql.pulse.schema.AbstractPulseDataFetcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

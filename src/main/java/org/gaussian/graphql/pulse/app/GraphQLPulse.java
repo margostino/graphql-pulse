@@ -1,4 +1,4 @@
-package org.gaussian.graphql.pulse;
+package org.gaussian.graphql.pulse.app;
 
 import graphql.schema.idl.RuntimeWiring;
 import io.vertx.core.Vertx;
@@ -7,12 +7,15 @@ import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.micrometer.MicrometerMetricsOptions;
 import io.vertx.micrometer.VertxPrometheusOptions;
+import org.gaussian.graphql.pulse.schema.PulseDataFetcher;
+import org.gaussian.graphql.pulse.consumer.PulseConsumer;
+import org.gaussian.graphql.pulse.verticle.GraphQLPulseVerticle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class GraphQLPulse {
 
-    private static final Logger LOG = LoggerFactory.getLogger(GraphQLPulseConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PulseConsumer.class);
 
     private static GraphQLPulse graphQLPulseApp = null;
     private final Vertx vertx;

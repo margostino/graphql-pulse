@@ -1,4 +1,4 @@
-package org.gaussian.graphql.dummy_vertx;
+package org.gaussian.graphql.dummy;
 
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;

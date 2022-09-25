@@ -1,8 +1,8 @@
-package org.gaussian.graphql.pulse;
+package org.gaussian.graphql.pulse.domain;
 
 import lombok.Getter;
 
-import static org.gaussian.graphql.pulse.GraphQLPulseConsumer.*;
+import static org.gaussian.graphql.pulse.consumer.PulseConsumer.*;
 
 @Getter
 public enum MetricType {

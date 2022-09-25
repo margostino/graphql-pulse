@@ -1,4 +1,4 @@
-package org.gaussian.graphql.pulse;
+package org.gaussian.graphql.pulse.consumer;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
@@ -10,9 +10,9 @@ import io.vertx.micrometer.backends.BackendRegistries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GraphQLPulseConsumer implements Handler<Message<Object>> {
+public class PulseConsumer implements Handler<Message<Object>> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(GraphQLPulseConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PulseConsumer.class);
     public static final String QUERY_COUNTER_NAME = "graphql-pulse.requests";
     public static final String QUERY_NULL_VALUES_NAME = "graphql-pulse.null_values";
     public static final String QUERY_ERRORS_NAME = "graphql-pulse.errors";
