@@ -1,0 +1,293 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2022-09-26T16:22:38.800Z",
+  "__export_source": "insomnia.desktop.app:v2022.5.1",
+  "resources": [
+    {
+      "_id": "req_870e4efd92874d8aa4757ae6a79d4615",
+      "parentId": "fld_51990832e7b04c0881c5910052723785",
+      "modified": 1664209205294,
+      "created": 1660735436162,
+      "url": "http://localhost:10000/indicators",
+      "name": "wiremock",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"namespace\": \"co2_emission\",\n\t\"arguments\": {\n\t\t\"country\": \"se\"\n\t},\n\t\"indicators\": [\n\t\t\"co2_transport_emission\"\n\t]\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "id": "pair_95cb980f10664701a349e54a6168bec8"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1659113307055,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "fld_51990832e7b04c0881c5910052723785",
+      "parentId": "wrk_7df0baae8d844a908227cd2a8ba9cafa",
+      "modified": 1660735436131,
+      "created": 1660735436131,
+      "name": "graphql-pulse",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1628145687993.875,
+      "_type": "request_group"
+    },
+    {
+      "_id": "wrk_7df0baae8d844a908227cd2a8ba9cafa",
+      "parentId": null,
+      "modified": 1630668006961,
+      "created": 1621250505214,
+      "name": "margostino",
+      "description": "",
+      "scope": "collection",
+      "_type": "workspace"
+    },
+    {
+      "_id": "req_c10b2a28cb1f43c0bae0d5562ed78b7b",
+      "parentId": "fld_51990832e7b04c0881c5910052723785",
+      "modified": 1664209224275,
+      "created": 1660735436148,
+      "url": "http://localhost:8080/graphql",
+      "name": "bad request provider",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"query ($country: String) {\\n\\tair_pollution(country: $country) {\\n\\t\\tcarbon_monoxide\\n\\t\\tnon_methane_volatile_organic_compounds\\n\\t\\tdeath_rate\\n\\t}\\n}\\n\",\"variables\":{\"country\":\"gb\"}}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "id": "pair_9b3b1096311e4c6f98a2d7120568b374"
+        }
+      ],
+      "metaSortKey": -1657416161709.5,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_cbcb7d1fb7db404b8279c13366f8bbba",
+      "parentId": "fld_51990832e7b04c0881c5910052723785",
+      "modified": 1664209241907,
+      "created": 1660735436137,
+      "url": "http://localhost:8080/graphql",
+      "name": "partial error",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"query ($country: String, $city: String) {\\n\\tco2_emission(country: $country, city: $city) {\\n\\t\\tco2_emission_per_capita\\n\\t\\tco2_waste_emission\\n\\t\\tco2_transport_emission\\n\\t}\\n}\\n\",\"variables\":{\"country\":\"us\",\"city\":\"new york\"}}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "id": "pair_9b3b1096311e4c6f98a2d7120568b374"
+        }
+      ],
+      "metaSortKey": -1657416161659.5,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_7478af4d4552497994d59b44a9699497",
+      "parentId": "fld_51990832e7b04c0881c5910052723785",
+      "modified": 1664209253529,
+      "created": 1660735436132,
+      "url": "http://localhost:8080/graphql",
+      "name": "multiple namespaces",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"query ($country: String, $city: String) {\\n\\tair_pollution(country: $country, city: $city) {\\n\\t\\tcarbon_monoxide\\n\\t\\tnon_methane_volatile_organic_compounds\\n\\t\\tdeath_rate\\n\\t}\\n\\tco2_emission(country: $country, city: $city) {\\n\\t\\tco2_emission_per_capita\\n\\t\\tco2_waste_emission\\n\\t\\tco2_transport_emission\\n\\t}\\n}\\n\",\"variables\":{\"country\":\"se\",\"city\":\"stockholm\"}}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "id": "pair_9b3b1096311e4c6f98a2d7120568b374"
+        }
+      ],
+      "metaSortKey": -1657416161609.5,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_4985400ce4754159b343203eaf175d2e",
+      "parentId": "fld_51990832e7b04c0881c5910052723785",
+      "modified": 1664209266386,
+      "created": 1660735436142,
+      "url": "http://localhost:8080/graphql",
+      "name": "all ok",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"query ($country: String) {\\n\\tdemographic(country: $country) {\\n\\t\\tpopulation\\n\\t\\tpopulation_between_30_39\\n\\t}\\n\\teconomy(country: $country) {\\n\\t\\tgovernment_debt\\n\\t}\\n}\\n\",\"variables\":{\"country\":\"se\"}}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "id": "pair_9b3b1096311e4c6f98a2d7120568b374"
+        }
+      ],
+      "metaSortKey": -1656583401899.25,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_ce78ecb30bb14e7da9b2ac0d6cd25615",
+      "parentId": "fld_51990832e7b04c0881c5910052723785",
+      "modified": 1664209277521,
+      "created": 1664040859786,
+      "url": "http://localhost:8080/graphql",
+      "name": "pulse",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"query ($type: String, $field: String) {\\n\\tpulse(type: $type, field: $field) {\\n\\t\\trequests {\\n\\t\\t\\ttype\\n\\t\\t\\tfield\\n\\t\\t\\tcount\\n\\t\\t}\\n\\t\\tnull_values {\\n\\t\\t\\ttype\\n\\t\\t\\tfield\\n\\t\\t\\tcount\\n\\t\\t}\\n\\t\\terrors {\\n\\t\\t\\ttype\\n\\t\\t\\tfield\\n\\t\\t\\tcount\\n\\t\\t}\\n\\t}\\n}\\n\",\"variables\":{\"type\":\"demographic\",\"field\":\"population\"}}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "id": "pair_9b3b1096311e4c6f98a2d7120568b374"
+        }
+      ],
+      "metaSortKey": -1656479306935.4688,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_b8b26b1f64634ce7ad944f4a75a7df21",
+      "parentId": "fld_51990832e7b04c0881c5910052723785",
+      "modified": 1664209287243,
+      "created": 1660735436151,
+      "url": "http://localhost:8080/ping",
+      "name": "ping",
+      "description": "",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "metaSortKey": -1656375211971.6875,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_3659b517cf21425d82a213a94873a779",
+      "parentId": "fld_51990832e7b04c0881c5910052723785",
+      "modified": 1664209297381,
+      "created": 1660735436156,
+      "url": "http://localhost:8081/metrics",
+      "name": "metrics",
+      "description": "",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "metaSortKey": -1656271117007.9062,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "env_f23d5de80f53e5cfcd17bf3ac664f642ccdc62d3",
+      "parentId": "wrk_7df0baae8d844a908227cd2a8ba9cafa",
+      "modified": 1621250505282,
+      "created": 1621250505282,
+      "name": "Base Environment",
+      "data": {},
+      "dataPropertyOrder": null,
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 1621250505282,
+      "_type": "environment"
+    },
+    {
+      "_id": "jar_f23d5de80f53e5cfcd17bf3ac664f642ccdc62d3",
+      "parentId": "wrk_7df0baae8d844a908227cd2a8ba9cafa",
+      "modified": 1655389756128,
+      "created": 1621250505284,
+      "name": "Default Jar",
+      "cookies": [],
+      "_type": "cookie_jar"
+    },
+    {
+      "_id": "spc_a2b0fdcccb7d4f41ad19b3eead94db06",
+      "parentId": "wrk_7df0baae8d844a908227cd2a8ba9cafa",
+      "modified": 1621250505219,
+      "created": 1621250505219,
+      "fileName": "mpcs",
+      "contents": "",
+      "contentType": "yaml",
+      "_type": "api_spec"
+    }
+  ]
+}
