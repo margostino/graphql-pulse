@@ -1,4 +1,4 @@
-package org.gaussian.graphql.dummy;
+package org.gaussian.graphql.demo;
 
 import graphql.execution.DataFetcherResult;
 import graphql.schema.DataFetchingEnvironment;

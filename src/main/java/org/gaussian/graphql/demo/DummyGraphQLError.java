@@ -1,4 +1,4 @@
-package org.gaussian.graphql.dummy;
+package org.gaussian.graphql.demo;
 
 import com.google.common.collect.ImmutableMap;
 import graphql.ErrorType;

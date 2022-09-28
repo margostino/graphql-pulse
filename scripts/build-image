@@ -1,0 +1,86 @@
+#!/bin/bash
+
+RED="\033[91m"
+GREEN="\033[92m"
+YELLOW="\033[93m"
+GREY="\033[90m"
+PURPLE="\033[95m"
+ENDC="\033[0m"
+
+BUILD_VERSION='latest'
+SERVICE_PORT=8080
+METRICS_PORT=8081
+SERVICE_NAME='graphql-pulse-demo'
+DOCKER_ID='margostino'
+
+
+log_debug() {
+    printf "${GREY}${1}${ENDC}\n"
+}
+
+log_info() {
+    printf "${GREEN}${1}${ENDC}\n"
+}
+
+log_warn() {
+    printf "${YELLOW}${1}${ENDC}\n"
+}
+
+log_error() {
+    printf "${RED}${1}${ENDC}\n"
+}
+
+# Transform long options to short ones
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    "--service-port")
+        set -- "$@" "-s"
+        ;;
+    "--metrics-port")
+        set -- "$@" "-m"
+        ;;
+    *)
+        set -- "$@" "$arg"
+        ;;
+  esac
+done
+
+while getopts ":s:m:v" opt; do
+    case ${opt} in
+        s)
+            service_port=${OPTARG}
+            ;;
+        m)
+            metrics_port=${OPTARG}
+            ;;
+        v)
+            build_version=${OPTARG}
+            ;;
+        \?)
+            echo "Invalid option: -${OPTARG}!"
+            ;;
+        :)
+            echo "Option -${OPTARG} requires an argument!"
+            ;;
+    esac
+done
+
+log_info "Service Port: ${SERVICE_PORT}"
+log_info "Metrics Port: ${METRICS_PORT}"
+log_info "Build Version: ${BUILD_VERSION}"
+log_info "Service Name: ${SERVICE_NAME}"
+
+#docker_login
+#   log_info "Building service with version ${BUILD_VERSION}"
+#   ./gradlew -no-build-jar-cache -PbuildVersion=${BUILD_VERSION} clean
+#   ./gradlew build-jar -PbuildVersion=${BUILD_VERSION}
+
+IMAGE_NAME="${SERVICE_NAME}:${BUILD_VERSION}"
+log_debug "Building docker image ${IMAGE_NAME}"
+
+docker build \
+  -t ${IMAGE_NAME} \
+  --build-arg SERVICE_PORT=${SERVICE_PORT} \
+  --build-arg METRICS_PORT=${METRICS_PORT} \
+  --no-cache .

@@ -17,14 +17,16 @@ repositories {
 val vertxVersion = "4.3.2"
 val junitJupiterVersion = "5.7.0"
 
-val mainVerticleName = "org.gaussian.graphql-pulse.Main"
+val mainVerticleName = "org.gaussian.graphql.demo.GraphQLServerVerticle"
+val mainClassName = "org.gaussian.graphql.demo.Main"
 val launcherClassName = "io.vertx.core.Launcher"
 
 val watchForChange = "src/**/*"
 val doOnChange = "${projectDir}/gradlew classes"
 
 application {
-  mainClass.set(launcherClassName)
+  //mainClass.set(launcherClassName)
+  mainClass.set("org.gaussian.graphql.demo.Main")
 }
 
 dependencies {
@@ -77,7 +79,8 @@ java {
 tasks.withType<ShadowJar> {
   archiveClassifier.set("fat")
   manifest {
-    attributes(mapOf("Main-Verticle" to mainVerticleName))
+    //attributes(mapOf("Main-Verticle" to mainVerticleName))
+    attributes(mapOf("Main-Class" to mainClassName))
   }
   mergeServiceFiles()
 }
@@ -89,6 +92,6 @@ tasks.withType<Test> {
   }
 }
 
-tasks.withType<JavaExec> {
-  args = listOf("run", mainVerticleName, "--redeploy=$watchForChange", "--launcher-class=$launcherClassName", "--on-redeploy=$doOnChange")
-}
+//tasks.withType<JavaExec> {
+//  args = listOf("run", mainVerticleName, "--redeploy=$watchForChange", "--launcher-class=$launcherClassName", "--on-redeploy=$doOnChange")
+//}

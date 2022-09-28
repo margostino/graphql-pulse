@@ -1,13 +1,267 @@
 {
   "_type": "export",
   "__export_format": 4,
-  "__export_date": "2022-09-26T16:22:38.800Z",
+  "__export_date": "2022-09-28T20:08:19.944Z",
   "__export_source": "insomnia.desktop.app:v2022.5.1",
   "resources": [
     {
+      "_id": "req_d14d2d6f0b6e4107b37cd37fe8b22623",
+      "parentId": "fld_46dc1e944402454fbd15f983d50cefa7",
+      "modified": 1664386933920,
+      "created": 1664386922144,
+      "url": "http://localhost:5002/metrics",
+      "name": "metrics",
+      "description": "",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1656531354567.3594,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "fld_46dc1e944402454fbd15f983d50cefa7",
+      "parentId": "fld_51990832e7b04c0881c5910052723785",
+      "modified": 1664386852697,
+      "created": 1664386852697,
+      "name": "docker",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1664386852697,
+      "_type": "request_group"
+    },
+    {
+      "_id": "fld_51990832e7b04c0881c5910052723785",
+      "parentId": "wrk_7df0baae8d844a908227cd2a8ba9cafa",
+      "modified": 1660735436131,
+      "created": 1660735436131,
+      "name": "graphql-pulse",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1628145687993.875,
+      "_type": "request_group"
+    },
+    {
+      "_id": "wrk_7df0baae8d844a908227cd2a8ba9cafa",
+      "parentId": null,
+      "modified": 1630668006961,
+      "created": 1621250505214,
+      "name": "margostino",
+      "description": "",
+      "scope": "collection",
+      "_type": "workspace"
+    },
+    {
+      "_id": "req_52aefd6fe2f64eb98a996536c5c8db14",
+      "parentId": "fld_46dc1e944402454fbd15f983d50cefa7",
+      "modified": 1664395158766,
+      "created": 1664395151711,
+      "url": "http://localhost:5000/metrics",
+      "name": "metrics (LB)",
+      "description": "",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1656531354542.3594,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_80ca922155be4280a3e5bc116090e4df",
+      "parentId": "fld_46dc1e944402454fbd15f983d50cefa7",
+      "modified": 1664394960563,
+      "created": 1664386906536,
+      "url": "http://localhost:5001/ping",
+      "name": "ping",
+      "description": "",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1656531354517.3594,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_9d3b8c46da854d08bc95a6ab2a7fcaf2",
+      "parentId": "fld_46dc1e944402454fbd15f983d50cefa7",
+      "modified": 1664395137891,
+      "created": 1664395122244,
+      "url": "http://localhost:5000/ping",
+      "name": "ping (LB)",
+      "description": "",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1656531354492.3594,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_3c1c28ca2e2249efbe450d180f1654f5",
+      "parentId": "fld_46dc1e944402454fbd15f983d50cefa7",
+      "modified": 1664386896909,
+      "created": 1664386891092,
+      "url": "http://localhost:5001/graphql",
+      "name": "pulse",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"query ($type: String, $field: String) {\\n\\tpulse(type: $type, field: $field) {\\n\\t\\trequests {\\n\\t\\t\\ttype\\n\\t\\t\\tfield\\n\\t\\t\\tcount\\n\\t\\t}\\n\\t\\tnull_values {\\n\\t\\t\\ttype\\n\\t\\t\\tfield\\n\\t\\t\\tcount\\n\\t\\t}\\n\\t\\terrors {\\n\\t\\t\\ttype\\n\\t\\t\\tfield\\n\\t\\t\\tcount\\n\\t\\t}\\n\\t}\\n}\\n\",\"variables\":{\"type\":\"demographic\",\"field\":\"population\"}}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "id": "pair_9b3b1096311e4c6f98a2d7120568b374"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1656531354467.3594,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_a3cf050a119444ddadf556ed6abb3d42",
+      "parentId": "fld_46dc1e944402454fbd15f983d50cefa7",
+      "modified": 1664395259171,
+      "created": 1664395244808,
+      "url": "http://localhost:5000/graphql",
+      "name": "pulse (LB)",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"query ($type: String, $field: String) {\\n\\tpulse(type: $type, field: $field) {\\n\\t\\trequests {\\n\\t\\t\\ttype\\n\\t\\t\\tfield\\n\\t\\t\\tcount\\n\\t\\t}\\n\\t\\tnull_values {\\n\\t\\t\\ttype\\n\\t\\t\\tfield\\n\\t\\t\\tcount\\n\\t\\t}\\n\\t\\terrors {\\n\\t\\t\\ttype\\n\\t\\t\\tfield\\n\\t\\t\\tcount\\n\\t\\t}\\n\\t}\\n}\\n\",\"variables\":{\"type\":\"demographic\",\"field\":\"population\"}}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "id": "pair_9b3b1096311e4c6f98a2d7120568b374"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1656531354442.3594,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_64d2b9d8dfac4547875af21099358e1b",
+      "parentId": "fld_46dc1e944402454fbd15f983d50cefa7",
+      "modified": 1664386874048,
+      "created": 1664386867686,
+      "url": "http://localhost:5001/graphql",
+      "name": "all ok",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"query ($country: String) {\\n\\tdemographic(country: $country) {\\n\\t\\tpopulation\\n\\t\\tpopulation_between_30_39\\n\\t}\\n\\teconomy(country: $country) {\\n\\t\\tgovernment_debt\\n\\t}\\n}\\n\",\"variables\":{\"country\":\"se\"}}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "id": "pair_9b3b1096311e4c6f98a2d7120568b374"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1656531354417.3594,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_3eb1bbfffd154ebd9cd7885e8ac19e19",
+      "parentId": "fld_46dc1e944402454fbd15f983d50cefa7",
+      "modified": 1664395254697,
+      "created": 1664395237071,
+      "url": "http://localhost:5000/graphql",
+      "name": "all ok (LB)",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"query ($country: String) {\\n\\tdemographic(country: $country) {\\n\\t\\tpopulation\\n\\t\\tpopulation_between_30_39\\n\\t}\\n\\teconomy(country: $country) {\\n\\t\\tgovernment_debt\\n\\t}\\n}\\n\",\"variables\":{\"country\":\"se\"}}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "id": "pair_9b3b1096311e4c6f98a2d7120568b374"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1656505330676.414,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
       "_id": "req_870e4efd92874d8aa4757ae6a79d4615",
       "parentId": "fld_51990832e7b04c0881c5910052723785",
-      "modified": 1664209205294,
+      "modified": 1664386857750,
       "created": 1660735436162,
       "url": "http://localhost:10000/indicators",
       "name": "wiremock",
@@ -37,31 +291,9 @@
       "_type": "request"
     },
     {
-      "_id": "fld_51990832e7b04c0881c5910052723785",
-      "parentId": "wrk_7df0baae8d844a908227cd2a8ba9cafa",
-      "modified": 1660735436131,
-      "created": 1660735436131,
-      "name": "graphql-pulse",
-      "description": "",
-      "environment": {},
-      "environmentPropertyOrder": null,
-      "metaSortKey": -1628145687993.875,
-      "_type": "request_group"
-    },
-    {
-      "_id": "wrk_7df0baae8d844a908227cd2a8ba9cafa",
-      "parentId": null,
-      "modified": 1630668006961,
-      "created": 1621250505214,
-      "name": "margostino",
-      "description": "",
-      "scope": "collection",
-      "_type": "workspace"
-    },
-    {
       "_id": "req_c10b2a28cb1f43c0bae0d5562ed78b7b",
       "parentId": "fld_51990832e7b04c0881c5910052723785",
-      "modified": 1664209224275,
+      "modified": 1664386858511,
       "created": 1660735436148,
       "url": "http://localhost:8080/graphql",
       "name": "bad request provider",
@@ -79,6 +311,7 @@
           "id": "pair_9b3b1096311e4c6f98a2d7120568b374"
         }
       ],
+      "authentication": {},
       "metaSortKey": -1657416161709.5,
       "isPrivate": false,
       "settingStoreCookies": true,
@@ -92,7 +325,7 @@
     {
       "_id": "req_cbcb7d1fb7db404b8279c13366f8bbba",
       "parentId": "fld_51990832e7b04c0881c5910052723785",
-      "modified": 1664209241907,
+      "modified": 1664386860887,
       "created": 1660735436137,
       "url": "http://localhost:8080/graphql",
       "name": "partial error",
@@ -110,6 +343,7 @@
           "id": "pair_9b3b1096311e4c6f98a2d7120568b374"
         }
       ],
+      "authentication": {},
       "metaSortKey": -1657416161659.5,
       "isPrivate": false,
       "settingStoreCookies": true,
@@ -141,6 +375,7 @@
           "id": "pair_9b3b1096311e4c6f98a2d7120568b374"
         }
       ],
+      "authentication": {},
       "metaSortKey": -1657416161609.5,
       "isPrivate": false,
       "settingStoreCookies": true,
@@ -154,7 +389,7 @@
     {
       "_id": "req_4985400ce4754159b343203eaf175d2e",
       "parentId": "fld_51990832e7b04c0881c5910052723785",
-      "modified": 1664209266386,
+      "modified": 1664386864480,
       "created": 1660735436142,
       "url": "http://localhost:8080/graphql",
       "name": "all ok",
@@ -172,6 +407,7 @@
           "id": "pair_9b3b1096311e4c6f98a2d7120568b374"
         }
       ],
+      "authentication": {},
       "metaSortKey": -1656583401899.25,
       "isPrivate": false,
       "settingStoreCookies": true,
@@ -185,7 +421,7 @@
     {
       "_id": "req_ce78ecb30bb14e7da9b2ac0d6cd25615",
       "parentId": "fld_51990832e7b04c0881c5910052723785",
-      "modified": 1664209277521,
+      "modified": 1664386884595,
       "created": 1664040859786,
       "url": "http://localhost:8080/graphql",
       "name": "pulse",
@@ -203,6 +439,7 @@
           "id": "pair_9b3b1096311e4c6f98a2d7120568b374"
         }
       ],
+      "authentication": {},
       "metaSortKey": -1656479306935.4688,
       "isPrivate": false,
       "settingStoreCookies": true,
@@ -216,7 +453,7 @@
     {
       "_id": "req_b8b26b1f64634ce7ad944f4a75a7df21",
       "parentId": "fld_51990832e7b04c0881c5910052723785",
-      "modified": 1664209287243,
+      "modified": 1664395111966,
       "created": 1660735436151,
       "url": "http://localhost:8080/ping",
       "name": "ping",
@@ -225,6 +462,7 @@
       "body": {},
       "parameters": [],
       "headers": [],
+      "authentication": {},
       "metaSortKey": -1656375211971.6875,
       "isPrivate": false,
       "settingStoreCookies": true,
@@ -238,7 +476,7 @@
     {
       "_id": "req_3659b517cf21425d82a213a94873a779",
       "parentId": "fld_51990832e7b04c0881c5910052723785",
-      "modified": 1664209297381,
+      "modified": 1664386842423,
       "created": 1660735436156,
       "url": "http://localhost:8081/metrics",
       "name": "metrics",
@@ -247,6 +485,7 @@
       "body": {},
       "parameters": [],
       "headers": [],
+      "authentication": {},
       "metaSortKey": -1656271117007.9062,
       "isPrivate": false,
       "settingStoreCookies": true,
@@ -256,38 +495,6 @@
       "settingRebuildPath": true,
       "settingFollowRedirects": "global",
       "_type": "request"
-    },
-    {
-      "_id": "env_f23d5de80f53e5cfcd17bf3ac664f642ccdc62d3",
-      "parentId": "wrk_7df0baae8d844a908227cd2a8ba9cafa",
-      "modified": 1621250505282,
-      "created": 1621250505282,
-      "name": "Base Environment",
-      "data": {},
-      "dataPropertyOrder": null,
-      "color": null,
-      "isPrivate": false,
-      "metaSortKey": 1621250505282,
-      "_type": "environment"
-    },
-    {
-      "_id": "jar_f23d5de80f53e5cfcd17bf3ac664f642ccdc62d3",
-      "parentId": "wrk_7df0baae8d844a908227cd2a8ba9cafa",
-      "modified": 1655389756128,
-      "created": 1621250505284,
-      "name": "Default Jar",
-      "cookies": [],
-      "_type": "cookie_jar"
-    },
-    {
-      "_id": "spc_a2b0fdcccb7d4f41ad19b3eead94db06",
-      "parentId": "wrk_7df0baae8d844a908227cd2a8ba9cafa",
-      "modified": 1621250505219,
-      "created": 1621250505219,
-      "fileName": "mpcs",
-      "contents": "",
-      "contentType": "yaml",
-      "_type": "api_spec"
     }
   ]
 }

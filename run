@@ -1,0 +1,43 @@
+#!/bin/bash
+
+SCRIPT_PATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+command=$1
+shift
+
+case ${command} in
+"build-jar")
+  ./scripts/build-jar
+  ;;
+
+"build-image")
+  ./scripts/build-image
+  ;;
+
+"build")
+  ./scripts/build-jar
+  ./scripts/build-image
+  ;;
+
+"config")
+  ./scripts/config
+  ;;
+
+"demo")
+  ./scripts/docker remove_container_if_exists demo_server_1
+  ./scripts/docker remove_container_if_exists demo_server_2
+  ./scripts/demo
+  ;;
+
+"dependencies")
+  ./scripts/docker docker_compose_up
+  ;;
+
+"stop")
+  ./scripts/docker stop_and_clean_docker_world
+  ;;
+
+*)
+  echo 'Invalid command'
+  exit 1
+  ;;
+esac

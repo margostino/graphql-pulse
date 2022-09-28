@@ -1,0 +1,4 @@
+#!/bin/bash
+
+BUILD_VERSION=latest
+./gradlew clean build -PbuildVersion=${BUILD_VERSION} -x :test

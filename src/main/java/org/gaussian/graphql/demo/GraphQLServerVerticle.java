@@ -1,4 +1,4 @@
-package org.gaussian.graphql.dummy;
+package org.gaussian.graphql.demo;
 
 import graphql.GraphQL;
 import graphql.language.ScalarTypeDefinition;
@@ -9,6 +9,8 @@ import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
+import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpHeaderValues;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpServer;
@@ -42,6 +44,7 @@ public class GraphQLServerVerticle extends AbstractVerticle {
         router.route().handler(BodyHandler.create());
         router.route().handler(this::contentTypeHandler);
         router.post("/graphql").handler(this::query);
+        router.get("/ping").handler(this::pong);
 
         final JsonObject config = config() != null ? config().getJsonObject("graphql") : new JsonObject();
 
@@ -51,6 +54,13 @@ public class GraphQLServerVerticle extends AbstractVerticle {
                 .listen(port)
                 .onSuccess(server -> complete(server, promise))
                 .onFailure(server -> fail(server, promise));
+    }
+
+    private void pong(RoutingContext context) {
+        LOG.info("ping received");
+        context.response()
+                .putHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.TEXT_PLAIN)
+                .end("pong");
     }
 
     private void complete(HttpServer server, Promise<Void> promise) {
