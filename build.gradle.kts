@@ -43,6 +43,7 @@ dependencies {
   implementation("io.vertx:vertx-reactive-streams")
   implementation("io.vertx:vertx-micrometer-metrics:4.3.2")
   implementation("io.vertx:vertx-dropwizard-metrics:4.3.2")
+  implementation("io.vertx:vertx-hazelcast:4.3.3")
 
   implementation("com.google.guava:guava:31.1-jre")
   implementation("org.slf4j:slf4j-api:1.7.36")
@@ -59,6 +60,7 @@ dependencies {
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.13.3")
   implementation("io.micrometer:micrometer-registry-prometheus:1.9.2")
   implementation("org.sonatype.nexus:google-guava-eventbus:3.2.0-01")
+  //implementation("com.hazelcast:hazelcast:5.1.3")
 
   compileOnly("org.projectlombok:lombok:1.18.24")
   annotationProcessor("org.projectlombok:lombok:1.18.24")

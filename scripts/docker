@@ -58,10 +58,8 @@ docker_compose_up() {
 
 stop_and_clean_docker_world() {
     clear
-#    docker-compose -f docker-compose.yml --project-name ${DOCKER_PROJECT_NAME} down -v || true
-#    docker-compose -f docker-compose.yml --project-name ${DOCKER_PROJECT_NAME} rm --force || true
-    docker-compose -f docker-compose.yml down -v || true
-    docker-compose -f docker-compose.yml rm --force || true
+    docker-compose -f docker-compose.yml --project-name ${DOCKER_PROJECT_NAME} down -v || true
+    docker-compose -f docker-compose.yml --project-name ${DOCKER_PROJECT_NAME} rm --force || true
     docker stop $(docker ps -a -q) || true
     docker rm $(docker ps -a -q) || true
     remove_image

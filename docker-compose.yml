@@ -19,14 +19,14 @@ services:
 #    command:
 #      - '--config.file=/etc/prometheus/prometheus.yml'
 
-  hazelcast-mgmt:
-    image: hazelcast/management-center:3.12.8
+  hazelcast-manager:
+    image: hazelcast/management-center:5.1.4
     ports:
       - "8080:8080"
       - "8081:8081"
     environment:
       - JAVA_OPTS=-Dhazelcast.mc.healthCheck.enable=true --add-modules java.se --add-exports java.base/jdk.internal.ref=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.management/sun.management=ALL-UNNAMED --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
-      - MC_INIT_CMD=/opt/hazelcast/mancenter/mc-conf.sh create-user -H=/data -n=amplifix -p=ampx2020 -r=admin -v
+#      - MC_INIT_CMD=/opt/hazelcast/mancenter/mc-conf.sh create-user -H=/data -n=admin -p=pulse2022 -r=admin -v
 
   load-balancer:
     image: nginx
