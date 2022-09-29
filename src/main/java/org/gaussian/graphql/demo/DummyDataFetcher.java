@@ -26,7 +26,6 @@ public class DummyDataFetcher extends AbstractPulseDataFetcher {
 
     @Override
     public CompletionStage<DataFetcherResult> getAndPulse(DataFetchingEnvironment environment) {
-        LOG.info("fetching and tracking query");
         final String type = environment.getField().getName();
         final List<String> fields = getQueryFields(environment);
         return completedFuture(fetchMockData(type, fields));

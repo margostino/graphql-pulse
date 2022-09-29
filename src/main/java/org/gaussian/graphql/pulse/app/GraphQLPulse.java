@@ -3,12 +3,16 @@ package org.gaussian.graphql.pulse.app;
 import com.hazelcast.config.Config;
 import com.hazelcast.config.JoinConfig;
 import com.hazelcast.config.NetworkConfig;
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 import graphql.schema.idl.RuntimeWiring;
+import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpServerOptions;
+import io.vertx.core.shareddata.Counter;
 import io.vertx.core.spi.cluster.ClusterManager;
 import io.vertx.micrometer.MicrometerMetricsOptions;
 import io.vertx.micrometer.VertxPrometheusOptions;
@@ -32,21 +36,28 @@ public class GraphQLPulse {
     //private static final String HZ_MANCENTER_PATH = "hazelcast-mancenter";
 
     private static GraphQLPulse graphQLPulseApp = null;
-    private final Vertx vertx;
+    private final Promise<Vertx> startup;
+    //private final Vertx vertx;
 
     private GraphQLPulse() {
-        Instant start = now();
-        Promise startup = Promise.promise();
-        this.vertx = Vertx.currentContext() != null ? Vertx.currentContext().owner() : Vertx.vertx(vertxOptions());
-        ClusterManager clusterManager = createHazelcastClusterManager();
-        VertxOptions vertxOptions = new VertxOptions().setClusterManager(clusterManager);
+        this.startup = Promise.promise();
 
+        Instant start = now();
+        ClusterManager clusterManager = createHazelcastClusterManager();
+        VertxOptions vertxOptions = vertxOptions(clusterManager);
+        //this.vertx = Vertx.currentContext() != null ? Vertx.currentContext().owner() : Vertx.vertx(vertxOptions(clusterManager));
+        LOG.info("sarlanga 5");
         Vertx.clusteredVertx(vertxOptions, async -> {
             if (async.succeeded()) {
+                LOG.info("sarlanga 6");
                 Duration duration = Duration.between(start, now());
+                Promise<Counter> sharedCounter = Promise.promise();
+                clusterManager.getCounter("graphql-pulse-metrics", sharedCounter);
                 LOG.info("GraphQL-Pulse verticle deployed in {} seconds", duration.getSeconds());
-                deployVerticle(async.result());
-                startup.complete();
+                LOG.info("sarlanga 7");
+                deployVerticle(async.result(), sharedCounter);
+                startup.complete(async.result());
+                LOG.info("sarlanga 8");
             } else {
                 LOG.error("GraphQL-Pulse verticle deployment failed: " + async.cause().getMessage());
                 startup.fail(async.cause());
@@ -55,12 +66,12 @@ public class GraphQLPulse {
         //vertx.deployVerticle(new GraphQLPulseVerticle());
     }
 
-    private void deployVerticle(Vertx vertx) {
-        vertx.deployVerticle(new GraphQLPulseVerticle());
+    private void deployVerticle(Vertx vertx, Promise<Counter> sharedCounter) {
+        vertx.deployVerticle(new GraphQLPulseVerticle(sharedCounter));
     }
 
-    public EventBus eventBus() {
-        return vertx.eventBus();
+    public Future<EventBus> eventBus() {
+        return startup.future().map(Vertx::eventBus);
     }
 
     public static GraphQLPulse getGraphQLPulse() {
@@ -70,14 +81,16 @@ public class GraphQLPulse {
         return graphQLPulseApp;
     }
 
-    private static VertxOptions vertxOptions() {
+    private static VertxOptions vertxOptions(ClusterManager clusterManager) {
         VertxPrometheusOptions prometheusOptions = new VertxPrometheusOptions().setEnabled(true)
                 .setStartEmbeddedServer(true)
                 .setEmbeddedServerOptions(new HttpServerOptions().setPort(3000))
                 .setEmbeddedServerEndpoint("/metrics");
         MicrometerMetricsOptions metricsOptions = new MicrometerMetricsOptions().setPrometheusOptions(prometheusOptions)
                 .setEnabled(true);
-        return new VertxOptions().setMetricsOptions(metricsOptions);
+        return new VertxOptions().setMetricsOptions(metricsOptions)
+                .setClusterManager(clusterManager)
+                .setBlockedThreadCheckInterval(10000);
     }
 
     public static RuntimeWiring.Builder newRuntimeWiringBuilder() {
@@ -88,7 +101,7 @@ public class GraphQLPulse {
 
     private ClusterManager createHazelcastClusterManager() {
         Config hazelcastConfig = new Config();
-        hazelcastConfig.setClusterName("graphql-pulse");
+        hazelcastConfig.setClusterName("dev");
         NetworkConfig network = hazelcastConfig.getNetworkConfig();
         network.setPort(5701).setPortCount(20);
         network.setPortAutoIncrement(true);
@@ -98,7 +111,9 @@ public class GraphQLPulse {
         //final String hzMancenterUrl = format("http://{0}:{1}/{2}", getHZHost(), HZ_MANCENTER_PORT, HZ_MANCENTER_PATH);
         //ManagementCenterConfig manCenterCfg = new ManagementCenterConfig().setEnabled(true).setUrl(hzMancenterUrl);
         //hazelcastConfig.setManagementCenterConfig(manCenterCfg);
-        return new HazelcastClusterManager(hazelcastConfig);
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance(hazelcastConfig);
+        //return new HazelcastClusterManager(hazelcastConfig);
+        return new HazelcastClusterManager(hazelcastInstance);
     }
 
     private String getHZHost() {

@@ -30,7 +30,6 @@ public class PulseDataFetcher extends AbstractPulseDataFetcher {
 
     @Override
     public CompletionStage<DataFetcherResult> getAndPulse(DataFetchingEnvironment environment) {
-        LOG.info("fetching and tracking query");
         List<String> fields = getQueryFields(environment);
         return completedFuture(getPulse(fields));
     }

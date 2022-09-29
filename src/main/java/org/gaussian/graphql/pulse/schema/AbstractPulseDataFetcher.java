@@ -25,10 +25,10 @@ public abstract class AbstractPulseDataFetcher implements DataFetcher<Completion
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractPulseDataFetcher.class);
 
-    private final EventBus eventBus;
+    private final Future<EventBus> asyncEventBus;
 
     public AbstractPulseDataFetcher() {
-        this.eventBus = getGraphQLPulse().eventBus();
+        this.asyncEventBus = getGraphQLPulse().eventBus();
     }
 
     public abstract CompletionStage<DataFetcherResult> getAndPulse(DataFetchingEnvironment environment);
@@ -36,7 +36,6 @@ public abstract class AbstractPulseDataFetcher implements DataFetcher<Completion
     @Override
     public CompletionStage<DataFetcherResult> get(DataFetchingEnvironment environment) {
         Future<DataFetcherResult> asyncResult;
-        LOG.info("fetching fields");
         final String type = environment.getField().getName();
         asyncResult = fromCompletionStage(getAndPulse(environment));
         asyncResult.onSuccess(result -> trackData(type, result))
@@ -73,7 +72,9 @@ public abstract class AbstractPulseDataFetcher implements DataFetcher<Completion
             }
 
             final String message = query.encode();
-            eventBus.send(GRAPHQL_PULSE_ADDRESS, message);
+
+            asyncEventBus.onSuccess(eventBus -> eventBus.send(GRAPHQL_PULSE_ADDRESS, message))
+                    .onSuccess(error -> LOG.error("Event bus cannot be used", error));
         }
     }
 

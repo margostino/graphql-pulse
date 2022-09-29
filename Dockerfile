@@ -12,6 +12,7 @@ MAINTAINER maj.dagostino@gmail.com
 #ARG BUILD_VERSION=SNAPSHOT
 ARG SERVICE_PORT=8080
 ARG METRICS_PORT=8081
+ARG HAZELCAST_CLUSTER_PORT=5701
 
 ENV JAVA_OPTS "--add-modules java.se --add-exports java.base/jdk.internal.ref=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.management/sun.management=ALL-UNNAMED --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED ${JAVA_OPTS}"
 ENV SERVICE_PORT=$SERVICE_PORT

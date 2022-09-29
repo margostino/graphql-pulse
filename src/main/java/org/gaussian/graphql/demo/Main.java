@@ -23,9 +23,11 @@ public class Main {
                 .readFile("schema.graphql")
                 .map(Buffer::toString)
                 .map(schema -> {
+                    LOG.info("sarlanga 1");
                     config.getJsonObject("graphql").put("schema", schema);
                     DeploymentOptions options = new DeploymentOptions().setConfig(config);
                     vertx.deployVerticle(new GraphQLServerVerticle(), options);
+                    LOG.info("sarlanga 2");
                     return config;
                 })
                 .onFailure(error -> {
