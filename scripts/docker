@@ -81,7 +81,7 @@ remove_container_if_exists() {
 
 remove_image() {
   if [[ "$(docker images -q graphql-pulse-demo:latest 2> /dev/null)" == "" ]]; then
-    docker rmi $(docker images | grep amplifix | tr -s ' ' | cut -d ' ' -f 3) || true
+    docker rmi $(docker images | grep graphql-pulse-demo | tr -s ' ' | cut -d ' ' -f 3) || true
   fi
 }
 

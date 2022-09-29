@@ -2,7 +2,6 @@ package org.gaussian.graphql.pulse.app;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.config.JoinConfig;
-import com.hazelcast.config.ManagementCenterConfig;
 import com.hazelcast.config.NetworkConfig;
 import graphql.schema.idl.RuntimeWiring;
 import io.vertx.core.Promise;
@@ -10,7 +9,6 @@ import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpServerOptions;
-import io.vertx.core.json.JsonObject;
 import io.vertx.core.spi.cluster.ClusterManager;
 import io.vertx.micrometer.MicrometerMetricsOptions;
 import io.vertx.micrometer.VertxPrometheusOptions;
@@ -24,15 +22,14 @@ import java.time.Duration;
 import java.time.Instant;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static java.lang.String.format;
 import static java.lang.System.getenv;
 import static java.time.Instant.now;
 
 public class GraphQLPulse {
 
     private static final Logger LOG = LoggerFactory.getLogger(GraphQLPulse.class);
-    private static final String HZ_MANCENTER_PORT = "8080";
-    private static final String HZ_MANCENTER_PATH = "hazelcast-mancenter";
+    //private static final String HZ_MANCENTER_PORT = "8080";
+    //private static final String HZ_MANCENTER_PATH = "hazelcast-mancenter";
 
     private static GraphQLPulse graphQLPulseApp = null;
     private final Vertx vertx;
@@ -98,7 +95,7 @@ public class GraphQLPulse {
         JoinConfig join = network.getJoin();
         join.getMulticastConfig().setEnabled(true);
         //join.getKubernetesConfig().setEnabled(true);
-        final String hzMancenterUrl = format("http://{0}:{1}/{2}", getHZHost(), HZ_MANCENTER_PORT, HZ_MANCENTER_PATH);
+        //final String hzMancenterUrl = format("http://{0}:{1}/{2}", getHZHost(), HZ_MANCENTER_PORT, HZ_MANCENTER_PATH);
         //ManagementCenterConfig manCenterCfg = new ManagementCenterConfig().setEnabled(true).setUrl(hzMancenterUrl);
         //hazelcastConfig.setManagementCenterConfig(manCenterCfg);
         return new HazelcastClusterManager(hazelcastConfig);
