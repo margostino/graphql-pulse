@@ -17,13 +17,13 @@ type EnvironmentIndicators {
 type PulseCounter {
     type: String
     field: String
-    count: Long
+    value: Long
 }
 
 type Pulse {
-    requests: [PulseCounter!]
-    null_values: [PulseCounter!]
-    errors: [PulseCounter!]
+    requests_count: [PulseCounter!]
+    none_values_count: [PulseCounter!]
+    errors_count: [PulseCounter!]
 }
 
 type Query {

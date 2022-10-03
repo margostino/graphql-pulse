@@ -1,5 +1,5 @@
 #!/bin/bash
 
 DOCKER_HOST=$(ifconfig | grep -E "([0-9]{1,3}\.){3}[0-9]{1,3}" | grep -v 127.0.0.1 | awk '{ print $2 }' | cut -f2 -d: | head -n1)
-docker run -d --name demo_server_1 --rm -e HZ_HOST=$(value DOCKER_HOST) --add-host=host.docker.internal:host-gateway -p 5001:8080 -p 5002:8081 -p 5701:5701 -i -t graphql-pulse-demo:latest
-docker run -d --name demo_server_2 --rm -e HZ_HOST=$(value DOCKER_HOST) --add-host=host.docker.internal:host-gateway -p 5003:8080 -p 5004:8081 -p 5702:5701 -i -t graphql-pulse-demo:latest
+docker run -d --name demo_server_1 --rm -e HZ_HOST=$(DOCKER_HOST) --add-host=host.docker.internal:host-gateway -p 5001:8080 -p 5002:8081 -p 5701:5701 -i -t graphql-pulse-demo:latest
+docker run -d --name demo_server_2 --rm -e HZ_HOST=$(DOCKER_HOST) --add-host=host.docker.internal:host-gateway -p 5003:8080 -p 5004:8081 -p 5702:5701 -i -t graphql-pulse-demo:latest

@@ -10,41 +10,48 @@ import io.vertx.core.impl.logging.LoggerFactory;
 import io.vertx.core.json.JsonObject;
 import io.vertx.micrometer.MicrometerMetricsOptions;
 import io.vertx.micrometer.VertxPrometheusOptions;
+import org.gaussian.graphql.pulse.app.GraphQLPulse;
 
 public class Main {
 
     private final static Logger LOG = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
-        final Vertx vertx = vertx();
-        final JsonObject schemaConfig = new JsonObject().put("file", "schema.graphql");
-        final JsonObject config = new JsonObject().put("graphql", schemaConfig);
-        vertx.fileSystem()
-                .readFile("schema.graphql")
-                .map(Buffer::toString)
-                .map(schema -> {
-                    LOG.info("sarlanga 1");
-                    config.getJsonObject("graphql").put("schema", schema);
-                    DeploymentOptions options = new DeploymentOptions().setConfig(config);
-                    vertx.deployVerticle(new GraphQLServerVerticle(), options);
-                    LOG.info("sarlanga 2");
-                    return config;
+        VertxOptions vertxOptions = vertxOptions();
+        GraphQLPulse.start(vertxOptions)
+                .onSuccess(pulse -> {
+                    final Vertx vertx = pulse.vertx();
+                    final JsonObject schemaConfig = new JsonObject().put("file", "schema.graphql");
+                    final JsonObject config = new JsonObject().put("graphql", schemaConfig);
+                    pulse.vertx().fileSystem()
+                            .readFile("schema.graphql")
+                            .map(Buffer::toString)
+                            .map(schema -> {
+                                config.getJsonObject("graphql").put("schema", schema);
+                                DeploymentOptions options = new DeploymentOptions().setConfig(config);
+                                vertx.deployVerticle(new GraphQLServerVerticle(pulse), options);
+                                return config;
+                            })
+                            .onFailure(error -> {
+                                LOG.error("Cannot read schema", error);
+                                System.exit(1);
+                            });
                 })
-                .onFailure(error -> {
-                    LOG.error("Cannot read schema", error);
-                    System.exit(1);
-                });
+                .onFailure(error -> LOG.error("Pulse cannot start", error));
     }
 
     private static Vertx vertx() {
+        final VertxOptions options = vertxOptions();
+        return Vertx.vertx(options);
+    }
+
+    private static VertxOptions vertxOptions() {
         VertxPrometheusOptions prometheusOptions = new VertxPrometheusOptions().setEnabled(true)
                 .setStartEmbeddedServer(true)
                 .setEmbeddedServerOptions(new HttpServerOptions().setPort(8081))
                 .setEmbeddedServerEndpoint("/metrics");
-        MicrometerMetricsOptions metricsOptions = new MicrometerMetricsOptions().setPrometheusOptions(prometheusOptions)
-                .setEnabled(true);
-        final VertxOptions options = new VertxOptions().setMetricsOptions(metricsOptions);
-        return Vertx.vertx(options);
+        MicrometerMetricsOptions metricsOptions = new MicrometerMetricsOptions().setPrometheusOptions(prometheusOptions).setEnabled(true);
+        return new VertxOptions().setMetricsOptions(metricsOptions);
     }
 
 }

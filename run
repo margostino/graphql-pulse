@@ -27,6 +27,7 @@ case ${command} in
   ./scripts/docker remove_container_if_exists demo_server_1
   ./scripts/docker remove_container_if_exists demo_server_2
   ./scripts/demo
+  ./scripts/config
   ./scripts/docker docker_compose_up
   ;;
 

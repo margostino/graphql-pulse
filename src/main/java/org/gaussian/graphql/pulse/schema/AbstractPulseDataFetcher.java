@@ -18,17 +18,17 @@ import java.util.concurrent.CompletionStage;
 import static io.vertx.core.Future.fromCompletionStage;
 import static io.vertx.core.json.JsonObject.mapFrom;
 import static java.util.stream.Collectors.toList;
-import static org.gaussian.graphql.pulse.app.GraphQLPulse.getGraphQLPulse;
 import static org.gaussian.graphql.pulse.verticle.GraphQLPulseVerticle.GRAPHQL_PULSE_ADDRESS;
 
+@SuppressWarnings({"unchecked", "deprecation"})
 public abstract class AbstractPulseDataFetcher implements DataFetcher<CompletionStage<DataFetcherResult>> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractPulseDataFetcher.class);
 
-    private final Future<EventBus> asyncEventBus;
+    private final EventBus eventBus;
 
-    public AbstractPulseDataFetcher() {
-        this.asyncEventBus = getGraphQLPulse().eventBus();
+    public AbstractPulseDataFetcher(EventBus eventBus) {
+        this.eventBus = eventBus;
     }
 
     public abstract CompletionStage<DataFetcherResult> getAndPulse(DataFetchingEnvironment environment);
@@ -73,8 +73,7 @@ public abstract class AbstractPulseDataFetcher implements DataFetcher<Completion
 
             final String message = query.encode();
 
-            asyncEventBus.onSuccess(eventBus -> eventBus.send(GRAPHQL_PULSE_ADDRESS, message))
-                    .onSuccess(error -> LOG.error("Event bus cannot be used", error));
+            eventBus.send(GRAPHQL_PULSE_ADDRESS, message);
         }
     }
 

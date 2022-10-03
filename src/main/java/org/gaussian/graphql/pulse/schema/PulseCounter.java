@@ -7,13 +7,15 @@ import lombok.Getter;
 @Builder
 public class PulseCounter {
 
+    private String metricType;
     private String type;
     private String field;
-    private Double count;
+    private Double value;
 
-    private PulseCounter(String type, String field, Double count) {
+    private PulseCounter(String metricType, String type, String field, Double value) {
+        this.metricType = metricType;
         this.type = type;
         this.field = field;
-        this.count = count;
+        this.value = value;
     }
 }

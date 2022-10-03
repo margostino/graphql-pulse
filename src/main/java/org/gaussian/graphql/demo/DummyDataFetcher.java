@@ -2,6 +2,7 @@ package org.gaussian.graphql.demo;
 
 import graphql.execution.DataFetcherResult;
 import graphql.schema.DataFetchingEnvironment;
+import io.vertx.core.eventbus.EventBus;
 import org.gaussian.graphql.pulse.schema.AbstractPulseDataFetcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,12 +16,14 @@ import java.util.concurrent.CompletionStage;
 import static java.lang.Math.random;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
+@SuppressWarnings("unchecked")
 public class DummyDataFetcher extends AbstractPulseDataFetcher {
 
     private static final Logger LOG = LoggerFactory.getLogger(DummyDataFetcher.class);
     private final Random random;
 
-    public DummyDataFetcher() {
+    public DummyDataFetcher(EventBus eventBus) {
+        super(eventBus);
         this.random = new Random();
     }
 
@@ -43,8 +46,16 @@ public class DummyDataFetcher extends AbstractPulseDataFetcher {
             }
             builder.data(data);
         } else {
-            fields.stream().forEach(field -> data.put(field, null));
-            builder.error(new DummyGraphQLError("some dummy error", List.of(type, fields.stream().findAny().get())));
+            fields.stream()
+                    .forEach(field -> {
+                        if (random() > 0.5) {
+                            data.put(field, null);
+                            builder.error(new DummyGraphQLError("some dummy error", List.of(type, field)));
+                        } else {
+                            data.put(field, random.nextInt(Integer.MAX_VALUE));
+                        }
+                        builder.data(data);
+                    });
         }
 
         return builder.build();

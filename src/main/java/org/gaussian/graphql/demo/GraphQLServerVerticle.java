@@ -23,11 +23,12 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.graphql.GraphQLHandler;
 import io.vertx.ext.web.handler.graphql.GraphQLHandlerOptions;
+import org.gaussian.graphql.pulse.app.GraphQLPulse;
 
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpHeaderValues.APPLICATION_JSON;
 import static java.lang.String.format;
-import static org.gaussian.graphql.pulse.app.GraphQLPulse.newRuntimeWiringBuilder;
+import static org.gaussian.graphql.pulse.schema.PulseRuntimeWiring.newRuntimeWiringBuilder;
 
 public class GraphQLServerVerticle extends AbstractVerticle {
 
@@ -35,6 +36,11 @@ public class GraphQLServerVerticle extends AbstractVerticle {
     private final static int DEFAULT_PORT = 8080;
 
     private GraphQLHandler graphQLHandler;
+    private final GraphQLPulse pulse;
+
+    public GraphQLServerVerticle(GraphQLPulse pulse) {
+        this.pulse = pulse;
+    }
 
     @Override
     public void start(Promise<Void> promise) {
@@ -97,8 +103,8 @@ public class GraphQLServerVerticle extends AbstractVerticle {
         final ScalarTypeDefinition scalarTypeDefinition = ScalarTypeExtensionDefinition.newScalarTypeDefinition().name("Long").build();
         schemaRegistry.add(scalarTypeDefinition);
 
-        final DummyDataFetcher fetcher = new DummyDataFetcher();
-        final RuntimeWiring runtimeWiring = newRuntimeWiringBuilder()
+        final DummyDataFetcher fetcher = new DummyDataFetcher(pulse.eventBus());
+        final RuntimeWiring runtimeWiring = newRuntimeWiringBuilder(pulse.eventBus(), pulse.pulseRegistry())
                 .scalar(ExtendedScalars.GraphQLLong)
                 .type("Query", typeWiring -> typeWiring.dataFetcher("demographic", fetcher))
                 .type("Query", typeWiring -> typeWiring.dataFetcher("economy", fetcher))
