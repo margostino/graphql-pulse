@@ -1,8 +1,6 @@
 package org.gaussian.graphql.pulse.app;
 
 import com.hazelcast.config.Config;
-import com.hazelcast.config.JoinConfig;
-import com.hazelcast.config.NetworkConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import io.vertx.core.Future;
@@ -11,6 +9,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.spi.cluster.ClusterManager;
 import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
+import org.gaussian.graphql.pulse.configuration.PulseConfig;
 import org.gaussian.graphql.pulse.metric.PulseRegistry;
 import org.gaussian.graphql.pulse.verticle.GraphQLPulseVerticle;
 import org.slf4j.Logger;
@@ -26,20 +25,10 @@ public record PulseClusterManager(ClusterManager clusterManager) {
 
     private static final Logger LOG = LoggerFactory.getLogger(PulseClusterManager.class);
 
-    public static PulseClusterManager create() {
-        // TODO: config from file
-        Config config = new Config();
-        config.setClusterName("dev");
-        config.getCPSubsystemConfig().setCPMemberCount(0);
-        NetworkConfig network = config.getNetworkConfig();
-        network.setPort(5701).setPortCount(20);
-        network.setPortAutoIncrement(true);
-        JoinConfig join = network.getJoin();
-        join.getMulticastConfig().setEnabled(true);
+    public static PulseClusterManager create(PulseConfig pulseConfig) {
+        Config config = pulseConfig.getClusterConfig();
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance(config);
-
         final ClusterManager clusterManager = new HazelcastClusterManager(hazelcastInstance);
-
         return new PulseClusterManager(clusterManager);
     }
 

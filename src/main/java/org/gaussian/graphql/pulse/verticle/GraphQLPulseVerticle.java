@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 public class GraphQLPulseVerticle extends AbstractVerticle {
 
     private static final Logger LOG = LoggerFactory.getLogger(GraphQLPulseVerticle.class);
-    public final static String GRAPHQL_PULSE_ADDRESS = "graphql.queries";
+    public static final String GRAPHQL_PULSE_ADDRESS = "graphql.pulse";
     private final PulseRegistry pulseRegistry;
 
     public GraphQLPulseVerticle(PulseRegistry pulseRegistry) {

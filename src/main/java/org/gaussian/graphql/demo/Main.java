@@ -11,13 +11,15 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.micrometer.MicrometerMetricsOptions;
 import io.vertx.micrometer.VertxPrometheusOptions;
 import org.gaussian.graphql.pulse.app.GraphQLPulse;
+import org.gaussian.graphql.pulse.configuration.PulseConfig;
 
 public class Main {
 
     private final static Logger LOG = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
-        VertxOptions vertxOptions = vertxOptions();
+        final VertxOptions vertxOptions = vertxOptions();
+        final PulseConfig pulseConfig =
         GraphQLPulse.start(vertxOptions)
                 .onSuccess(pulse -> {
                     final Vertx vertx = pulse.vertx();
@@ -38,11 +40,6 @@ public class Main {
                             });
                 })
                 .onFailure(error -> LOG.error("Pulse cannot start", error));
-    }
-
-    private static Vertx vertx() {
-        final VertxOptions options = vertxOptions();
-        return Vertx.vertx(options);
     }
 
     private static VertxOptions vertxOptions() {
