@@ -1,0 +1,6 @@
+{
+    "query": "query ($country: String) {\n\tdemographic(country: $country) {\n\t\tpopulation\n\t\tpopulation_between_30_39\n\t}\n\teconomy(country: $country) {\n\t\tgovernment_debt\n\t}\n}\n",
+    "variables": {
+        "country": "se"
+    }
+}

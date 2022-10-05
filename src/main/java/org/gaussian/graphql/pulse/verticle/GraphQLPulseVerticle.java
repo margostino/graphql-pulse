@@ -20,7 +20,7 @@ public class GraphQLPulseVerticle extends AbstractVerticle {
     @Override
     public void start(Promise<Void> promise) {
         vertx.eventBus().consumer(GRAPHQL_PULSE_ADDRESS, new PulseConsumer(pulseRegistry));
-        LOG.info("GraphQLPulse application started");
-        LOG.info("GraphQLPulseConsumer consumer registered");
+        LOG.info("GraphQL Pulse consumer consumer registered");
+        LOG.info("GraphQL Pulse application started");
     }
 }
