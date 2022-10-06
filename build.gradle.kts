@@ -71,9 +71,8 @@ dependencies {
   testImplementation("io.vertx:vertx-junit5")
   testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
   testImplementation("org.hamcrest:hamcrest-junit:2.0.0.0")
-  testImplementation("com.xebialabs.restito:restito:1.1.0")
   testImplementation("io.rest-assured:rest-assured:5.2.0")
-  testImplementation("org.mockito:mockito-core:4.8.0")
+  testImplementation("org.awaitility:awaitility:4.2.0")
 
 }
 

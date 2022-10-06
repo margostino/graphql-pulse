@@ -45,6 +45,10 @@ type Pulse {
 }
 
 type Query {
+    faulty(country: String): FaultyIndicators
+    some_faulty(country: String): SomeFaultyIndicators
+    none(country: String): NoneIndicators
+    some_none(country: String): SomeNoneIndicators
     demographic(country: String): DemographicIndicators
     economy(country: String): EconomyIndicators
     environment(country: String): EnvironmentIndicators

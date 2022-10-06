@@ -34,7 +34,13 @@ public record GraphQLPulse(Vertx vertx, PulseRegistry pulseRegistry) {
                 .create(pulseConfig)
                 .start(vertxOptions);
     }
-    
+
+    public void stop() {
+        vertx.close()
+                .onSuccess(ignored -> LOG.info("GraphQL Pulse was closed successfully"))
+                .onFailure(error -> LOG.error("Shutdown failed", error));
+    }
+
     public EventBus eventBus() {
         return vertx.eventBus();
     }

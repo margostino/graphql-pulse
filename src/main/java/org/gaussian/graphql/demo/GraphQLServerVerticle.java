@@ -103,12 +103,17 @@ public class GraphQLServerVerticle extends AbstractVerticle {
         final ScalarTypeDefinition scalarTypeDefinition = ScalarTypeExtensionDefinition.newScalarTypeDefinition().name("Long").build();
         schemaRegistry.add(scalarTypeDefinition);
 
-        final DummyDataFetcher fetcher = new DummyDataFetcher(pulse.eventBus());
+        final boolean probabilisticDemo = config().getBoolean("probabilistic_demo_enabled");
+        final DummyDataFetcher fetcher = new DummyDataFetcher(pulse.eventBus(), probabilisticDemo);
         final RuntimeWiring runtimeWiring = newRuntimeWiringBuilder(pulse.eventBus(), pulse.pulseRegistry())
                 .scalar(ExtendedScalars.GraphQLLong)
                 .type("Query", typeWiring -> typeWiring.dataFetcher("demographic", fetcher))
                 .type("Query", typeWiring -> typeWiring.dataFetcher("economy", fetcher))
                 .type("Query", typeWiring -> typeWiring.dataFetcher("environment", fetcher))
+                .type("Query", typeWiring -> typeWiring.dataFetcher("faulty", fetcher))
+                .type("Query", typeWiring -> typeWiring.dataFetcher("some_faulty", fetcher))
+                .type("Query", typeWiring -> typeWiring.dataFetcher("none", fetcher))
+                .type("Query", typeWiring -> typeWiring.dataFetcher("some_none", fetcher))
                 .build();
 
         final SchemaGenerator schemaGenerator = new SchemaGenerator();

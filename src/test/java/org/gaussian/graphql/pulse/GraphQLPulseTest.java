@@ -1,90 +1,92 @@
 package org.gaussian.graphql.pulse;
 
-import io.vertx.core.*;
-import io.vertx.core.buffer.Buffer;
-import io.vertx.core.http.HttpClient;
-import io.vertx.core.http.HttpClientResponse;
-import io.vertx.core.http.HttpMethod;
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
-import org.gaussian.graphql.demo.GraphQLServerVerticle;
 import org.gaussian.graphql.pulse.app.GraphQLPulse;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.nio.charset.StandardCharsets;
-
+import static io.restassured.RestAssured.get;
+import static io.restassured.RestAssured.given;
+import static org.gaussian.graphql.demo.Demo.run;
 import static org.gaussian.graphql.pulse.helpers.QueryHelper.resource;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.aMapWithSize;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.valid4j.Assertive.neverGetHere;
 
 @ExtendWith(VertxExtension.class)
 public class GraphQLPulseTest {
 
-    private HttpClient httpClient;
+    private static final String HOST = "localhost";
+    private static final String QUERY_PATH = "/graphql";
+    private static final String PING_PATH = "/ping";
+    private static final int PORT = 8080;
+
+    private final RequestSpecification scenario = given();
+    private GraphQLPulse pulse;
 
     @BeforeEach
-    public void setup(VertxTestContext testContext) {
-        GraphQLPulse.start()
-                .onSuccess(pulse -> {
-                    final Vertx vertx = pulse.vertx();
-                    httpClient = vertx.createHttpClient();
-                    final JsonObject schemaConfig = new JsonObject().put("file", "schema.graphql");
-                    final JsonObject config = new JsonObject().put("graphql", schemaConfig);
-                    pulse.vertx().fileSystem()
-                            .readFile("schema.graphql")
-                            .map(Buffer::toString)
-                            .map(schema -> {
-                                config.getJsonObject("graphql").put("schema", schema);
-                                DeploymentOptions options = new DeploymentOptions().setConfig(config);
-                                vertx.deployVerticle(new GraphQLServerVerticle(pulse), options, testContext.succeeding(id -> testContext.completeNow()));
-                                return config;
-                            })
-                            .onFailure(error -> {
-                                neverGetHere(error, "graphql schema failed");
-                            });
-                })
-                .onFailure(error -> {
-                    throw new RuntimeException("graphql-pulse initialization failed", error);
-                });
+    public void setup(VertxTestContext context) {
+        run().onSuccess(ignored -> {
+            this.pulse = ignored;
+            context.completeNow();
+        }).onFailure(context::failNow);
     }
 
-    private Future<JsonObject> query(VertxTestContext context, String requestPath) {
-        final String query = resource(requestPath, StandardCharsets.UTF_8);
-        return httpClient.request(HttpMethod.POST, 8080, "localhost", "/graphql")
-                .compose(req -> req.send(query))
-                .map(response -> {
-                    assertThat(response.statusCode(), equalTo(200));
-                    return response;
-                })
-                .compose(HttpClientResponse::body)
-                .map(buffer -> new JsonObject(buffer.toString()));
+    @AfterEach
+    public void after() {
+        pulse.stop();
     }
 
     @Test
-    public void shouldReturnSuccessStatusAndQueryResponse(VertxTestContext context) {
-        query(context, "queries/two_types_query.json")
-                .onSuccess(response -> assertTrue(response.containsKey("data")));
+    public void shouldPing() {
+        get(PING_PATH).then().assertThat().statusCode(200);
+    }
+
+    @Test
+    public void shouldReturnSuccessStatusAndQueryResponse() {
+        scenario.given()
+                .contentType(ContentType.JSON)
+                .body(resource("queries/two_types_query.json"));
+
+        scenario.expect()
+                .statusCode(200)
+                .body("data.demographic.population", greaterThan(0))
+                .body("data.demographic.population_between_30_39", greaterThan(0))
+                .body("data.economy.government_debt", greaterThan(0));
+
+        Response response = scenario.when()
+                .post(QUERY_PATH);
+
+        assertThat(response.jsonPath().getMap(""), aMapWithSize(1));
+        assertThat(response.jsonPath().getMap("data"), aMapWithSize(2));
+        assertThat(response.jsonPath().getMap("data.demographic"), aMapWithSize(2));
+        assertThat(response.jsonPath().getMap("data.economy"), aMapWithSize(1));
+
+    }
+
+    @Test
+    public void shouldReturnFaultyMetrics() {
+//        query("queries/faulty_query.json")
+//                .flatMap(ignored -> query("queries/pulse_query.json"))
+//                .onSuccess(metrics -> {
+//                    assertThat(metrics.size(), equalTo(1));
+//                })
+//                .onFailure(context::failNow)
+//                .onComplete(complete(context));
+
     }
 
     private Handler<AsyncResult<JsonObject>> complete(VertxTestContext context) {
         return context.succeeding(response -> context.verify(() -> context.completeNow()));
     }
 
-    @Test
-    public void shouldReturnMetrics(VertxTestContext context) throws Throwable {
-        query(context, "queries/two_types_query.json")
-                .flatMap(ignored -> query(context, "queries/pulse_query.json"))
-                .onSuccess(metrics -> {
-                    assertThat(metrics.size(), greaterThan(0));
-                })
-                .onFailure(context::failNow)
-                .onComplete(complete(context));
-
-    }
 }

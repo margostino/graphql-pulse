@@ -19,6 +19,7 @@ import java.time.Duration;
 import java.time.Instant;
 
 import static io.vertx.core.Promise.promise;
+import static io.vertx.core.Vertx.clusteredVertx;
 import static java.lang.Runtime.getRuntime;
 import static java.time.Instant.now;
 
@@ -39,7 +40,7 @@ public record PulseClusterManager(ClusterManager clusterManager, PulseConfig pul
 
         vertxOptions.setClusterManager(clusterManager);
 
-        Vertx.clusteredVertx(vertxOptions, async -> {
+        clusteredVertx(vertxOptions, async -> {
             if (async.succeeded()) {
                 final Vertx vertx = async.result();
                 final PulseRegistry pulseRegistry = new PulseRegistry(clusterManager);
