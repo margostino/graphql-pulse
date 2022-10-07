@@ -16,10 +16,7 @@ jobs:
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v1
         with:
-          wrapper-directory: gradle/wrapper
-          gradle-executable: gradlew
-          allow-snapshots: true
-          min-wrapper-count: 1
+          min-wrapper-count: 2
         
       - name: Build
         run: ./gradlew clean build
