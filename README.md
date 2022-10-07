@@ -11,7 +11,6 @@ GPulse allows you to extract as many insights as you want from your GraphQL quer
 - Least recently used
 - Last usage within X time (e.g. 24h)
 
-(in part it was inspired by [Shopify/graphql-metrics](https://github.com/Shopify/graphql-metrics))
 
 ## Micrometer integration
 
