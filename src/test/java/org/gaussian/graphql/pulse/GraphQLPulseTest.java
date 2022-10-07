@@ -3,15 +3,10 @@ package org.gaussian.graphql.pulse;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Handler;
-import io.vertx.core.json.JsonObject;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import org.gaussian.graphql.pulse.app.GraphQLPulse;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import static io.restassured.RestAssured.get;
@@ -19,8 +14,7 @@ import static io.restassured.RestAssured.given;
 import static org.gaussian.graphql.demo.Demo.run;
 import static org.gaussian.graphql.pulse.helpers.QueryHelper.resource;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.aMapWithSize;
-import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.*;
 
 @ExtendWith(VertxExtension.class)
 public class GraphQLPulseTest {
@@ -33,7 +27,7 @@ public class GraphQLPulseTest {
     private final RequestSpecification scenario = given();
     private GraphQLPulse pulse;
 
-    @BeforeEach
+    @BeforeAll
     public void setup(VertxTestContext context) {
         run().onSuccess(ignored -> {
             this.pulse = ignored;
@@ -41,7 +35,7 @@ public class GraphQLPulseTest {
         }).onFailure(context::failNow);
     }
 
-    @AfterEach
+    @AfterAll
     public void after() {
         pulse.stop();
     }
@@ -75,18 +69,24 @@ public class GraphQLPulseTest {
 
     @Test
     public void shouldReturnFaultyMetrics() {
-//        query("queries/faulty_query.json")
-//                .flatMap(ignored -> query("queries/pulse_query.json"))
-//                .onSuccess(metrics -> {
-//                    assertThat(metrics.size(), equalTo(1));
-//                })
-//                .onFailure(context::failNow)
-//                .onComplete(complete(context));
+        scenario.given()
+                .contentType(ContentType.JSON)
+                .body(resource("queries/faulty_query.json"));
 
-    }
+        scenario.expect()
+                .statusCode(200)
+                .body("errors[0].message", equalTo("some dummy error"))
+                .body("errors[0].path", hasItems("faulty", "average_of_something"))
+                .body("data.faulty.average_of_something", nullValue());
 
-    private Handler<AsyncResult<JsonObject>> complete(VertxTestContext context) {
-        return context.succeeding(response -> context.verify(() -> context.completeNow()));
+        Response response = scenario.when()
+                .post(QUERY_PATH);
+
+        assertThat(response.jsonPath().getMap(""), aMapWithSize(2));
+        assertThat(response.jsonPath().getMap("data"), aMapWithSize(1));
+        assertThat(response.jsonPath().getList("errors"), hasSize(1));
+        assertThat(response.jsonPath().getMap("data.faulty"), aMapWithSize(1));
+
     }
 
 }
