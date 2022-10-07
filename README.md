@@ -1,4 +1,7 @@
 ### ⚠️ [WORK-IN-PROGRESS] 
+
+[![Build & Test](https://github.com/margostino/graphql-pulse/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/margostino/graphql-pulse/actions/workflows/main.yml)
+
 # graphql-pulse (GPulse)
 
 GraphQL Pulse is a **distributed** and **lightweight** metric collector for GraphQL queries. Users run queries and GPulse collects and serves metrics as part of the GraphQL server implementation.  
