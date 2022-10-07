@@ -1,0 +1,6 @@
+{
+    "query": "query ($country: String) {\n\tsome_faulty(country: $country) {\n\t\taverage_of_employees\n\t\ttotal_hospitals\n\t}\n}\n",
+    "variables": {
+        "country": "se"
+    }
+}

@@ -1,0 +1,6 @@
+{
+  "query": "query ($country: String) {\n\tsome_none(country: $country) {\n\t\ttotal_cars\n\t\ttotal_insurance_companies\n\t}\n}\n",
+  "variables": {
+    "country": "se"
+  }
+}

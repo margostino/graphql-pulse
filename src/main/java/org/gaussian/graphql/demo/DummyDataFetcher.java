@@ -55,13 +55,13 @@ public class DummyDataFetcher extends AbstractPulseDataFetcher {
                 generateErrorFakeResult(type, fields, builder);
                 break;
             case "some_faulty":
-                generateProbabilityErrorFakeResult(type, fields, builder);
+                generatePartialErrorFakeResult(type, fields, builder);
                 break;
             case "none":
                 generateNoneFakeResult(fields, builder);
                 break;
             case "some_none":
-                generateProbabilityNoneFakeResult(fields, builder);
+                generatePartialNoneFakeResult(fields, builder);
                 break;
             default:
                 generateFakeResult(fields, builder);
@@ -92,6 +92,20 @@ public class DummyDataFetcher extends AbstractPulseDataFetcher {
         builder.data(data);
     }
 
+    private void generatePartialNoneFakeResult(List<String> fields, DataFetcherResult.Builder builder) {
+        final Map<String, Object> data = new HashMap<>();
+        boolean hasNone = false;
+        for (String field : fields) {
+            if (!hasNone) {
+                data.put(field, null);
+                hasNone = true;
+            } else {
+                data.put(field, random.nextInt(Integer.MAX_VALUE));
+            }
+        }
+        builder.data(data);
+    }
+
     private void generateProbabilityNoneFakeResult(List<String> fields, DataFetcherResult.Builder builder) {
         final Map<String, Object> data = new HashMap<>();
         fields.stream()
@@ -102,6 +116,22 @@ public class DummyDataFetcher extends AbstractPulseDataFetcher {
                         data.put(field, random.nextInt(Integer.MAX_VALUE));
                     }
                 });
+        builder.data(data);
+    }
+
+    private void generatePartialErrorFakeResult(String type, List<String> fields, DataFetcherResult.Builder builder) {
+        final Map<String, Object> data = new HashMap<>();
+        boolean hasError = false;
+
+        for (String field : fields) {
+            if (!hasError) {
+                data.put(field, null);
+                builder.error(new DummyGraphQLError("some dummy error", List.of(type, field)));
+                hasError = true;
+            } else {
+                data.put(field, random.nextInt(Integer.MAX_VALUE));
+            }
+        }
         builder.data(data);
     }
 

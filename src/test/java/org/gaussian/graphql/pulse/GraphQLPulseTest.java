@@ -57,8 +57,7 @@ public class GraphQLPulseTest {
                 .body("data.demographic.population_between_30_39", greaterThan(0))
                 .body("data.economy.government_debt", greaterThan(0));
 
-        Response response = scenario.when()
-                .post(QUERY_PATH);
+        Response response = scenario.when().post(QUERY_PATH);
 
         assertThat(response.jsonPath().getMap(""), aMapWithSize(1));
         assertThat(response.jsonPath().getMap("data"), aMapWithSize(2));
@@ -79,8 +78,7 @@ public class GraphQLPulseTest {
                 .body("errors[0].path", hasItems("faulty", "average_of_something"))
                 .body("data.faulty.average_of_something", nullValue());
 
-        Response response = scenario.when()
-                .post(QUERY_PATH);
+        Response response = scenario.when().post(QUERY_PATH);
 
         assertThat(response.jsonPath().getMap(""), aMapWithSize(2));
         assertThat(response.jsonPath().getMap("data"), aMapWithSize(1));
@@ -89,4 +87,59 @@ public class GraphQLPulseTest {
 
     }
 
+    @Test
+    public void shouldReturnSomeFaultyMetrics() {
+        scenario.given()
+                .contentType(ContentType.JSON)
+                .body(resource("queries/some_faulty_query.json"));
+
+        scenario.expect()
+                .statusCode(200)
+                .body("errors[0].message", equalTo("some dummy error"))
+                .body("errors[0].path", hasItems("some_faulty", "average_of_employees"))
+                .body("data.some_faulty.average_of_employees", nullValue())
+                .body("data.some_faulty.total_hospitals", greaterThan(0));
+
+        Response response = scenario.when().post(QUERY_PATH);
+
+        assertThat(response.jsonPath().getMap(""), aMapWithSize(2));
+        assertThat(response.jsonPath().getMap("data"), aMapWithSize(1));
+        assertThat(response.jsonPath().getList("errors"), hasSize(1));
+        assertThat(response.jsonPath().getMap("data.some_faulty"), aMapWithSize(2));
+    }
+
+    @Test
+    public void shouldReturnNoneMetrics() {
+        scenario.given()
+                .contentType(ContentType.JSON)
+                .body(resource("queries/none_query.json"));
+
+        scenario.expect()
+                .statusCode(200)
+                .body("data.none.total_companies", nullValue());
+
+        Response response = scenario.when().post(QUERY_PATH);
+
+        assertThat(response.jsonPath().getMap(""), aMapWithSize(1));
+        assertThat(response.jsonPath().getMap("data"), aMapWithSize(1));
+        assertThat(response.jsonPath().getMap("data.none"), aMapWithSize(1));
+    }
+
+    @Test
+    public void shouldReturnSomeNoneMetrics() {
+        scenario.given()
+                .contentType(ContentType.JSON)
+                .body(resource("queries/some_none_query.json"));
+
+        scenario.expect()
+                .statusCode(200)
+                .body("data.some_none.total_insurance_companies", greaterThan(0))
+                .body("data.some_none.total_cars", nullValue());
+
+        Response response = scenario.when().post(QUERY_PATH);
+
+        assertThat(response.jsonPath().getMap(""), aMapWithSize(1));
+        assertThat(response.jsonPath().getMap("data"), aMapWithSize(1));
+        assertThat(response.jsonPath().getMap("data.some_none"), aMapWithSize(2));
+    }
 }
