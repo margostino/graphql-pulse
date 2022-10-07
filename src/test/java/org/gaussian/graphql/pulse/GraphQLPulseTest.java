@@ -25,18 +25,18 @@ public class GraphQLPulseTest {
     private static final int PORT = 8080;
 
     private final RequestSpecification scenario = given();
-    private GraphQLPulse pulse;
+    private static GraphQLPulse pulse;
 
     @BeforeAll
-    public void setup(VertxTestContext context) {
+    public static void setup(VertxTestContext context) {
         run().onSuccess(ignored -> {
-            this.pulse = ignored;
+            pulse = ignored;
             context.completeNow();
         }).onFailure(context::failNow);
     }
 
     @AfterAll
-    public void after() {
+    public static void tearDown() {
         pulse.stop();
     }
 
