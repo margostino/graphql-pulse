@@ -1,0 +1,7 @@
+{
+    "query": "query ($type: String, $field: String) {\n\tpulse(type: $type, field: $field) {\n\t\trequests_count {\n\t\t\ttype\n\t\t\tfield\n\t\t\tvalue\n\t\t}\n\t}\n}\n",
+    "variables": {
+        "type": "demographic",
+        "field": "population"
+    }
+}
