@@ -29,8 +29,8 @@ public class QueryTest {
 
     @BeforeAll
     public static void setup(VertxTestContext context) {
-        run().onSuccess(ignored -> {
-            pulse = ignored;
+        run().onSuccess(app -> {
+            pulse = app;
             context.completeNow();
         }).onFailure(context::failNow);
     }

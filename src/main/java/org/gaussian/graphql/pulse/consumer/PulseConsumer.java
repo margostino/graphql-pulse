@@ -24,7 +24,7 @@ public record PulseConsumer(PulseRegistry pulseRegistry) implements Handler<Mess
         final JsonObject values = body.getJsonObject("values");
         final JsonArray errors = body.getJsonArray("errors");
 
-        if (values != null) {
+        if (!type.equals("pulse") && values != null) {
             values.stream()
                     .forEach(field -> {
                         final Tags tags = Tags.of("type", type).and("field", field.getKey());

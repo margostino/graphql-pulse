@@ -35,6 +35,19 @@ public class PulseDataFetcher extends AbstractPulseDataFetcher {
         return getPulse(fields).toCompletionStage();
     }
 
+    private Future<DataFetcherResult> getPulse(List<String> fields) {
+        Promise<DataFetcherResult> promise = promise();
+
+        pulseRegistry.getAsyncMap()
+                .flatMap(AsyncMap::keys)
+                .map(keys -> filterMetricsBy(keys, fields))
+                .map(this::getCountersFor)
+                .onSuccess(counters -> mergeAsyncCounters(counters, promise))
+                .onFailure(error -> LOG.error("Cannot fetch async map", error));
+
+        return promise.future();
+    }
+
     private List<Future> getCountersFor(Set<String> metrics) {
         return metrics.stream()
                 .map(metricName -> {
@@ -48,19 +61,6 @@ public class PulseDataFetcher extends AbstractPulseDataFetcher {
                                     .build());
                 })
                 .collect(toList());
-    }
-
-    private Future<DataFetcherResult> getPulse(List<String> fields) {
-        Promise<DataFetcherResult> promise = promise();
-
-        pulseRegistry.getAsyncMap()
-                .flatMap(AsyncMap::keys)
-                .map(keys -> filterMetricsBy(keys, fields))
-                .map(this::getCountersFor)
-                .onSuccess(counters -> mergeAsyncCounters(counters, promise))
-                .onFailure(error -> LOG.error("Cannot fetch async map", error));
-
-        return promise.future();
     }
 
     private Set<String> filterMetricsBy(Set<String> metrics, List<String> fields) {
