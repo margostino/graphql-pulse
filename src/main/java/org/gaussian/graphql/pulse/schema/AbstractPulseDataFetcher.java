@@ -5,7 +5,6 @@ import graphql.execution.DataFetcherResult;
 import graphql.language.Field;
 import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
-import io.vertx.core.Future;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
 import org.slf4j.Logger;
@@ -35,13 +34,11 @@ public abstract class AbstractPulseDataFetcher implements DataFetcher<Completion
 
     @Override
     public CompletionStage<DataFetcherResult> get(DataFetchingEnvironment environment) {
-        Future<DataFetcherResult> asyncResult;
         final String type = environment.getField().getName();
-        asyncResult = fromCompletionStage(getAndPulse(environment));
-        asyncResult.onSuccess(result -> trackData(type, result))
-                .onFailure(error -> trackError(type, error));
-        return asyncResult.toCompletionStage();
-
+        return fromCompletionStage(getAndPulse(environment))
+                .onSuccess(result -> trackData(type, result))
+                .onFailure(error -> trackError(type, error))
+                .toCompletionStage();
     }
 
     protected List<String> getQueryFields(DataFetchingEnvironment environment) {
@@ -53,7 +50,7 @@ public abstract class AbstractPulseDataFetcher implements DataFetcher<Completion
     }
 
     private void trackData(String type, Object result) {
-        if (result instanceof DataFetcherResult) {
+        if (!type.equals("pulse") && result instanceof DataFetcherResult) {
             DataFetcherResult dataFetcherResult = (DataFetcherResult) result;
             final JsonObject query = new JsonObject().put("type", type);
             if (dataFetcherResult.getData() instanceof Map) {

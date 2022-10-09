@@ -24,7 +24,7 @@ public record PulseConsumer(PulseRegistry pulseRegistry) implements Handler<Mess
         final JsonObject values = body.getJsonObject("values");
         final JsonArray errors = body.getJsonArray("errors");
 
-        if (!type.equals("pulse") && values != null) {
+        if (values != null) {
             values.stream()
                     .forEach(field -> {
                         final Tags tags = Tags.of("type", type).and("field", field.getKey());
@@ -36,17 +36,16 @@ public record PulseConsumer(PulseRegistry pulseRegistry) implements Handler<Mess
                         }
 
                     });
-
-            if (errors != null) {
-                errors.stream()
-                        .map(String.class::cast)
-                        .forEach(field -> {
-                            final Tags tags = Tags.of("type", type).and("field", field);
-                            mark(tags, ERRORS_COUNT, type, field);
-                        });
-            }
         }
 
+        if (errors != null) {
+            errors.stream()
+                    .map(String.class::cast)
+                    .forEach(field -> {
+                        final Tags tags = Tags.of("type", type).and("field", field);
+                        mark(tags, ERRORS_COUNT, type, field);
+                    });
+        }
     }
 
     private void mark(Tags tags, MetricType metricType, String type, String field) {

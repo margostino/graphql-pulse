@@ -21,12 +21,10 @@ public class PulseRegistry {
     }
 
     public void incrementCounter(String metricName) {
-        if (!metricName.contains(".pulse.")) {
-            getAsyncMap().flatMap(asyncMap -> asyncMap.putIfAbsent(metricName, metricName))
-                    .flatMap(ignored -> getCounter(metricName))
-                    .onSuccess(Counter::incrementAndGet)
-                    .onFailure(error -> LOG.error(format("Cannot increment counter %s", metricName), error));
-        }
+        getAsyncMap().flatMap(asyncMap -> asyncMap.putIfAbsent(metricName, metricName))
+                .flatMap(ignored -> getCounter(metricName))
+                .onSuccess(Counter::incrementAndGet)
+                .onFailure(error -> LOG.error(format("Cannot increment counter %s", metricName), error));
     }
 
     public Future<Counter> getCounter(String metricName) {
