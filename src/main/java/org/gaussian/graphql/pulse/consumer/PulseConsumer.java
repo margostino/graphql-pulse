@@ -36,15 +36,15 @@ public record PulseConsumer(PulseRegistry pulseRegistry) implements Handler<Mess
                         }
 
                     });
-        }
 
-        if (errors != null) {
-            errors.stream()
-                    .map(String.class::cast)
-                    .forEach(field -> {
-                        final Tags tags = Tags.of("type", type).and("field", field);
-                        mark(tags, ERRORS_COUNT, type, field);
-                    });
+            if (errors != null) {
+                errors.stream()
+                        .map(String.class::cast)
+                        .forEach(field -> {
+                            final Tags tags = Tags.of("type", type).and("field", field);
+                            mark(tags, ERRORS_COUNT, type, field);
+                        });
+            }
         }
 
     }
