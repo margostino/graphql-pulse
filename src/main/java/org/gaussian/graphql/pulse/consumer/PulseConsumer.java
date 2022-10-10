@@ -1,16 +1,15 @@
 package org.gaussian.graphql.pulse.consumer;
 
-import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
 import io.vertx.core.Handler;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import io.vertx.micrometer.backends.BackendRegistries;
 import org.gaussian.graphql.pulse.metric.MetricType;
 import org.gaussian.graphql.pulse.metric.PulseRegistry;
 
-import static java.lang.String.format;
+import java.util.Map;
+
 import static org.gaussian.graphql.pulse.metric.MetricType.*;
 
 public record PulseConsumer(PulseRegistry pulseRegistry) implements Handler<Message<Object>> {
@@ -29,7 +28,7 @@ public record PulseConsumer(PulseRegistry pulseRegistry) implements Handler<Mess
 
                         mark(REQUESTS_COUNT, type, field.getKey(), tags);
 
-                        if (field.getValue() == null && (errors == null || (errors != null && !errors.contains(field.getKey())))) {
+                        if (hasNullValues(field, errors)) {
                             mark(NONE_VALUES_COUNT, type, field.getKey(), tags);
                         }
 
@@ -44,6 +43,10 @@ public record PulseConsumer(PulseRegistry pulseRegistry) implements Handler<Mess
                         mark(ERRORS_COUNT, type, field, tags);
                     });
         }
+    }
+
+    private boolean hasNullValues(Map.Entry<String, Object> field, JsonArray errors) {
+        return field.getValue() == null && (errors == null || (errors != null && !errors.contains(field.getKey())));
     }
 
     private void mark(MetricType metricType, String type, String field, Tags tags) {

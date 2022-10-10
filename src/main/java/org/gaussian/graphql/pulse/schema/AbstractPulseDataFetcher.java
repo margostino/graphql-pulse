@@ -10,12 +10,15 @@ import io.vertx.core.json.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletionStage;
 
 import static io.vertx.core.Future.fromCompletionStage;
 import static io.vertx.core.json.JsonObject.mapFrom;
+import static java.time.Instant.now;
 import static java.util.stream.Collectors.toList;
 import static org.gaussian.graphql.pulse.verticle.GraphQLPulseVerticle.GRAPHQL_PULSE_ADDRESS;
 
@@ -34,9 +37,10 @@ public abstract class AbstractPulseDataFetcher implements DataFetcher<Completion
 
     @Override
     public CompletionStage<DataFetcherResult> get(DataFetchingEnvironment environment) {
+        final Instant started = now();
         final String type = environment.getField().getName();
         return fromCompletionStage(getAndPulse(environment))
-                .onSuccess(result -> trackData(type, result))
+                .onSuccess(result -> trackData(type, result, started))
                 .onFailure(error -> trackError(type, error))
                 .toCompletionStage();
     }
@@ -49,10 +53,14 @@ public abstract class AbstractPulseDataFetcher implements DataFetcher<Completion
                 .collect(toList());
     }
 
-    private void trackData(String type, Object result) {
+    private void trackData(String type, Object result, Instant started) {
         if (!type.equals("pulse") && result instanceof DataFetcherResult) {
+            final Duration duration = Duration.between(started, now());
             DataFetcherResult dataFetcherResult = (DataFetcherResult) result;
-            final JsonObject query = new JsonObject().put("type", type);
+            final JsonObject query = new JsonObject()
+                    .put("type", type)
+                    .put("duration_ms", duration.toMillis());
+
             if (dataFetcherResult.getData() instanceof Map) {
                 Map<String, Object> data = (Map) dataFetcherResult.getData();
                 final JsonObject fields = mapFrom(data);
