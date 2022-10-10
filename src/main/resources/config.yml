@@ -5,6 +5,7 @@ graphql:
   file: schema.graphql
 
 pulse:
+  micrometer_enabled: true
   banner:
     path: pulse_banner.txt
     enabled: true

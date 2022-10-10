@@ -4,6 +4,7 @@ import com.hazelcast.config.Config;
 import com.hazelcast.config.JoinConfig;
 import com.hazelcast.config.NetworkConfig;
 import lombok.Builder;
+import lombok.Getter;
 
 @Builder
 public class PulseConfig {
@@ -11,7 +12,9 @@ public class PulseConfig {
     private static final String DEFAULT_BANNER = "pulse_banner.txt";
 
     private final ClusterConfig clusterConfig;
+    @Getter
     private final boolean micrometerEnabled;
+    @Getter
     private final boolean bannerEnabled;
     private final String bannerFilename;
 
@@ -30,10 +33,6 @@ public class PulseConfig {
         join.getMulticastConfig().setEnabled(clusterConfig.getNetworkConfig().isMultiCastEnabled());
 
         return config;
-    }
-
-    public boolean isBannerEnabled() {
-        return true;
     }
 
     public String getBannerFilename() {

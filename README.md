@@ -18,8 +18,22 @@ GPulse allows you to extract as many insights as you want from your GraphQL quer
 ## Micrometer integration
 
 Optionally, GPulse is able to use any registry from Micrometer and publish the metrics collected as well.
+These metrics will be published under `graphql_pulse_*` prefix.
 
-// TODO
+#### Example: 
+```
+# HELP graphql_pulse_requests_count_total  
+# TYPE graphql_pulse_requests_count_total counter
+graphql_pulse_requests_count_total{field="total_cars",type="some_none",} 2.0
+graphql_pulse_requests_count_total{field="average_of_something",type="faulty",} 3.0
+graphql_pulse_requests_count_total{field="government_debt",type="economy",} 1.0
+graphql_pulse_requests_count_total{field="total_insurance_companies",type="some_none",} 2.0
+graphql_pulse_requests_count_total{field="average_of_employees",type="some_faulty",} 2.0
+graphql_pulse_requests_count_total{field="total_hospitals",type="some_faulty",} 2.0
+graphql_pulse_requests_count_total{field="population_between_30_39",type="demographic",} 1.0
+graphql_pulse_requests_count_total{field="population",type="demographic",} 1.0
+graphql_pulse_requests_count_total{field="total_companies",type="none",} 2.0
+```
 
 ## Demo
 

@@ -43,7 +43,7 @@ public record PulseClusterManager(ClusterManager clusterManager, PulseConfig pul
         clusteredVertx(vertxOptions, async -> {
             if (async.succeeded()) {
                 final Vertx vertx = async.result();
-                final PulseRegistry pulseRegistry = new PulseRegistry(clusterManager);
+                final PulseRegistry pulseRegistry = new PulseRegistry(clusterManager, pulseConfig.isMicrometerEnabled());
 
                 onDeploy(vertx, pulseConfig);
                 vertx.deployVerticle(new GraphQLPulseVerticle(pulseRegistry));

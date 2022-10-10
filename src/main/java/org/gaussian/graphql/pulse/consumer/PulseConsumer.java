@@ -15,8 +15,6 @@ import static org.gaussian.graphql.pulse.metric.MetricType.*;
 
 public record PulseConsumer(PulseRegistry pulseRegistry) implements Handler<Message<Object>> {
 
-    private static final MeterRegistry METER_REGISTRY = BackendRegistries.getDefaultNow();
-
     // TODO: validate everything
     public void handle(Message message) {
         final JsonObject body = new JsonObject(message.body().toString());
@@ -29,10 +27,10 @@ public record PulseConsumer(PulseRegistry pulseRegistry) implements Handler<Mess
                     .forEach(field -> {
                         final Tags tags = Tags.of("type", type).and("field", field.getKey());
 
-                        mark(tags, REQUESTS_COUNT, type, field.getKey());
+                        mark(REQUESTS_COUNT, type, field.getKey(), tags);
 
                         if (field.getValue() == null && (errors == null || (errors != null && !errors.contains(field.getKey())))) {
-                            mark(tags, NONE_VALUES_COUNT, type, field.getKey());
+                            mark(NONE_VALUES_COUNT, type, field.getKey(), tags);
                         }
 
                     });
@@ -43,17 +41,12 @@ public record PulseConsumer(PulseRegistry pulseRegistry) implements Handler<Mess
                     .map(String.class::cast)
                     .forEach(field -> {
                         final Tags tags = Tags.of("type", type).and("field", field);
-                        mark(tags, ERRORS_COUNT, type, field);
+                        mark(ERRORS_COUNT, type, field, tags);
                     });
         }
     }
 
-    private void mark(Tags tags, MetricType metricType, String type, String field) {
-        METER_REGISTRY.counter(metricType.toLowerCase(), tags).increment();
-        pulseRegistry.incrementCounter(buildMetricName(metricType.toLowerCase(), type, field));
-    }
-
-    private String buildMetricName(String metricType, String type, String field) {
-        return format("%s.%s.%s", metricType, type, field);
+    private void mark(MetricType metricType, String type, String field, Tags tags) {
+        pulseRegistry.incrementCounter(metricType, type, field, tags);
     }
 }
